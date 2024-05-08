@@ -1,0 +1,88 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+
+    /* register route */
+    .horizontal_line::before {
+        @apply absolute -top-7 left-1/2 w-2/3 h-[2px] bg-gray-200 content-[""] -translate-x-1/2;
+    }
+
+    /* root route */
+    .auth-toggler {
+        @apply w-full h-full absolute left-0 flex justify-around items-center bg-concentrated;
+    }
+
+    /* home root route */
+    .sidebar {
+        @apply w-full flex justify-around items-center gap-3 py-4 lg:justify-evenly;
+    }
+
+    /* home root route */
+    .sidebar>a {
+        @apply flex items-center justify-start gap-4 cursor-pointer
+    }
+
+    /* inventory route */
+    .inventory_mobil_header {
+        @apply relative bg-primary text-white font-semibold text-lg py-3 flex justify-around items-center shadow-xl;
+    }
+
+    .inventory_mobil_header_before {
+        @apply absolute content-[""] bottom-0 w-1/2 h-1 bg-white;
+    }
+
+    .inventory_header_container {
+        @apply flex-col-reverse gap-1;
+    }
+
+    .inventory_desktop_header {
+        @apply w-fit gap-4 bg-transparent text-black shadow-none;
+    }
+
+    .inventory_sub_heading {
+        @apply absolute content-[""] bg-black w-full h-1 -bottom-1
+    }
+
+    .table_container>tbody>tr:not(:last-child) {
+        @apply border-b-[3px] border-gray-200
+    }
+
+    .inventory_hover_effect {
+        @apply hover:bg-white hover:shadow-lg transition-all active:bg-black
+    }
+
+    .inventory_hover_effect>svg {
+        @apply stroke-white;
+    }
+
+    .inventory_hover_effect:hover>svg {
+        @apply hover:stroke-black
+    }
+
+    .inventory_hover_effect:active>svg {
+        @apply hover:stroke-white
+    }
+
+    .default_flex {
+        @apply flex flex-col gap-3
+    }
+
+    /* form input number */
+    .input_arrow_removal input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    .input_arrow_removal input[type=number] {
+        appearance: textfield;
+    }
+
+    /* form button */
+    .inventory_button {
+        @apply absolute -right-28
+    }
+
+}
