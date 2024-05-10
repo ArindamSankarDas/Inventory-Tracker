@@ -56,4 +56,6 @@ const transactionReducer = createSlice({
 
 export const { addNewTransaction } = transactionReducer.actions;
 
+export const selectAllTransactions = (state) => state.transactions;
+
 export default transactionReducer.reducer;

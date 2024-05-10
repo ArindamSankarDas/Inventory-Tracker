@@ -1,4 +1,7 @@
-const HistoryItemsTable = () => {
+import PropTypes from "prop-types";
+import { formatISO, format } from "date-fns";
+
+const HistoryItemsTable = ({ data }) => {
   return (
     <div className='px-4 lg:px-0 select-none'>
       <table className='w-full mt-5 px-10 text-center rounded-lg table_container overflow-hidden'>
@@ -12,17 +15,27 @@ const HistoryItemsTable = () => {
           </tr>
         </thead>
         <tbody>
-          <tr className='h-14 text-lg bg-secondary'>
-            <td>12-01-23</td>
-            <td>Buy</td>
-            <td className='relative w-[15rem] lg:w-[25rem]'>Fans</td>
-            <td>40</td>
-            <td className='relative'>&#8377; 500</td>
-          </tr>
+          {data.map((transaction) => (
+            <tr key={transaction.id} className='h-14 text-lg bg-secondary'>
+              <td>{format(formatISO(transaction.date, { representation: "date" }), "dd-MM-yy")}</td>
+              <td className='capitalize'>{transaction.transactionType}</td>
+              <td className='relative w-[15rem] lg:w-[25rem]'>
+                {transaction.product_details.name}
+              </td>
+              <td>{transaction.product_details.count}</td>
+              <td className='relative'>
+                &#8377; {transaction.product_details.price}
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>
   );
+};
+
+HistoryItemsTable.propTypes = {
+  data: PropTypes.array,
 };
 
 export default HistoryItemsTable;
