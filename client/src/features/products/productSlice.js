@@ -3,11 +3,28 @@ import {
   nanoid,
   createSelector,
   createEntityAdapter,
+  createAsyncThunk,
 } from "@reduxjs/toolkit";
+
+import axios from "axios";
 
 const productAdapter = createEntityAdapter({});
 
-const initialState = productAdapter.getInitialState();
+const initialState = productAdapter.getInitialState({
+  status: "idle", // idle | loading | succeeded | failed
+  error: null,
+});
+
+export const fetchData = createAsyncThunk(
+  "products/fetchProducts",
+  async () => {
+    const response = await axios.get("/api/inventory");
+
+    console.log(response.data);
+
+    return response.data;
+  }
+);
 
 const productSlice = createSlice({
   name: "products",
