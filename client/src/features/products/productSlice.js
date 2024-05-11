@@ -1,21 +1,13 @@
-import { createSlice, nanoid, createSelector } from "@reduxjs/toolkit";
+import {
+  createSlice,
+  nanoid,
+  createSelector,
+  createEntityAdapter,
+} from "@reduxjs/toolkit";
 
-const initialState = [
-  {
-    id: nanoid(4),
-    name: "Fans",
-    count: 30,
-    price: 300,
-    isSeasonal: true,
-  },
-  {
-    id: nanoid(4),
-    name: "Sockets",
-    count: 40,
-    price: 600,
-    isSeasonal: false,
-  },
-];
+const productAdapter = createEntityAdapter({});
+
+const initialState = productAdapter.getInitialState();
 
 const productSlice = createSlice({
   name: "products",
@@ -27,7 +19,7 @@ const productSlice = createSlice({
           return;
         }
 
-        state.push(action.payload);
+        productAdapter.addOne(state, action.payload);
       },
       prepare(name, count, price, isSeasonal) {
         return {
@@ -47,11 +39,7 @@ const productSlice = createSlice({
         return;
       }
 
-      const indexOfElement = state.indexOf(
-        state.find((element) => element.id === action.payload)
-      );
-
-      state.splice(indexOfElement, 1);
+      productAdapter.removeOne(state, action.payload);
     },
 
     updateProduct: {
@@ -65,11 +53,10 @@ const productSlice = createSlice({
           return;
         }
 
-        const getProductByIndex = state.indexOf(
-          state.find((product) => product.id === id)
-        );
-
-        state.splice(getProductByIndex, 1, action.payload);
+        productAdapter.updateOne(state, {
+          id,
+          changes: { name, count, price },
+        });
       },
       prepare(id, name, count, price) {
         return {
@@ -88,7 +75,9 @@ const productSlice = createSlice({
 export const { addProduct, deleteProduct, updateProduct } =
   productSlice.actions;
 
-export const selectAllProducts = (state) => state.products;
+export const { selectAll: selectAllProducts } = productAdapter.getSelectors(
+  (state) => state.products
+);
 
 export const selectSeasonalProducts = createSelector(
   [selectAllProducts],
