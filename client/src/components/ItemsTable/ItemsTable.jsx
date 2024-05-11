@@ -13,7 +13,7 @@ const ItemsTable = ({ newProduct, setNewItem, data }) => {
 
   const [formState, setFormState] = useState({
     name: "",
-    count: "",
+    itemCount: "",
     price: "",
     isSeasonal: false,
   });
@@ -21,7 +21,7 @@ const ItemsTable = ({ newProduct, setNewItem, data }) => {
   useEffect(() => {
     const handleClick = function (e) {
       if (!formRef.current.contains(e.target)) {
-        setFormState({ name: "", count: "", price: "" });
+        setFormState({ name: "", itemCount: "", price: "" });
         setNewItem(false);
       }
     };
@@ -38,16 +38,16 @@ const ItemsTable = ({ newProduct, setNewItem, data }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const { count, name, price, isSeasonal } = formState;
+    const { itemCount, name, price, isSeasonal } = formState;
 
-    if (!name || !count || !price) {
+    if (!name || !itemCount || !price) {
       return;
     }
 
-    dispatch(addProduct(name, count, price, isSeasonal));
+    dispatch(addProduct(name, itemCount, price, isSeasonal));
     setFormState({
       name: "",
-      count: "",
+      itemCount: "",
       price: "",
       isSeasonal: false,
     });
@@ -78,13 +78,13 @@ const ItemsTable = ({ newProduct, setNewItem, data }) => {
           <FormInput
             holderName={"No. of Items"}
             inputType={"number"}
-            inputName={"productCount"}
-            inputValue={formState.count}
+            inputName={"productItemCount"}
+            inputValue={formState.itemCount}
             onInputChange={(e) =>
               setFormState((prevState) => {
                 return {
                   ...prevState,
-                  count: Number(e.target.value),
+                  itemCount: Number(e.target.value),
                 };
               })
             }

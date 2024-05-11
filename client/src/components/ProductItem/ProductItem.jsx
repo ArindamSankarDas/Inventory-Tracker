@@ -15,14 +15,14 @@ const ProductItem = ({ productDetails }) => {
 
   const [itemState, setItemState] = useState({
     name: productDetails.name,
-    count: productDetails.count,
+    itemCount: productDetails.itemCount,
     price: productDetails.price,
   });
 
-  const { count, name, price } = itemState;
+  const { itemCount, name, price } = itemState;
 
   const handleUpdate = (info) => {
-    const { name: infoName, price: infoPrice, count: infoCount } = info;
+    const { name: infoName, price: infoPrice, itemCount: infoItemCount } = info;
 
     if (!toEdit) {
       setToEdit(true);
@@ -32,14 +32,14 @@ const ProductItem = ({ productDetails }) => {
     if (
       toEdit &&
       infoName === name &&
-      infoCount === count &&
+      infoItemCount === itemCount &&
       infoPrice === price
     ) {
       setToEdit(false);
       return;
     }
 
-    dispatch(updateProduct(productDetails.id, name, count, price));
+    dispatch(updateProduct(productDetails.id, name, itemCount, price));
     setToEdit(false);
   };
 
@@ -91,18 +91,18 @@ const ProductItem = ({ productDetails }) => {
       </td>
       <td>
         {!toEdit ? (
-          count
+          itemCount
         ) : (
           <div className='px-4 py-1 text-center'>
             <FormInput
-              inputName={"itemCount"}
+              inputName={"itemItemCount"}
               inputType='number'
-              inputValue={itemState.count}
+              inputValue={itemState.itemCount}
               onInputChange={(e) =>
                 setItemState((prevState) => {
                   return {
                     ...prevState,
-                    count: e.target.value,
+                    itemCount: e.target.value,
                   };
                 })
               }
