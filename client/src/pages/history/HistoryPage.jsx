@@ -5,6 +5,7 @@ import { selectAllTransactions } from "../../features/transactions/transactionSl
 
 const HistoryPage = () => {
   const transactionHistory = useSelector(selectAllTransactions);
+  console.log(transactionHistory);
 
   return (
     <section className='flex-1 min-h-full lg:px-20'>

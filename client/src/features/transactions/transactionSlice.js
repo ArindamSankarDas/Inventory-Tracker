@@ -1,23 +1,13 @@
-import { createSlice, nanoid } from "@reduxjs/toolkit";
+import { createEntityAdapter, createSlice, nanoid } from "@reduxjs/toolkit";
 
-const initialState = [
-  {
-    id: nanoid(6),
-    date: new Date().toISOString(),
-    transactionType: "buy",
-    customer_details: {
-      name: "Mintu Das",
-      phone: 8453299451,
-      address: "Garwanpatty, L.D.S road",
-    },
+const transactionAdapter = createEntityAdapter({
+  selectId: (transaction) => transaction.product_details.name,
+});
 
-    product_details: {
-      name: "Fans",
-      price: 300,
-      count: 20,
-    },
-  },
-];
+const initialState = transactionAdapter.getInitialState({
+  status: "idle",
+  error: null,
+});
 
 const transactionReducer = createSlice({
   name: "transactions",
@@ -29,7 +19,10 @@ const transactionReducer = createSlice({
           return;
         }
 
-        state.push(action.payload);
+        const { id } = action.payload;
+
+        state.ids.push(id);
+        state.entities[id] = action.payload;
       },
       prepare(customerDetails, productDetails, transactionType) {
         return {
@@ -39,13 +32,13 @@ const transactionReducer = createSlice({
             transactionType,
             customer_details: {
               name: customerDetails.name,
-              phone: customerDetails.phone,
+              phone: Number(customerDetails.phone),
               address: customerDetails.address,
             },
             product_details: {
               name: productDetails.name,
-              price: productDetails.price,
-              count: productDetails.count,
+              price: Number(productDetails.price),
+              count: Number(productDetails.count),
             },
           },
         };
@@ -56,6 +49,7 @@ const transactionReducer = createSlice({
 
 export const { addNewTransaction } = transactionReducer.actions;
 
-export const selectAllTransactions = (state) => state.transactions;
+export const { selectAll: selectAllTransactions } =
+  transactionAdapter.getSelectors((state) => state.transactions);
 
 export default transactionReducer.reducer;
