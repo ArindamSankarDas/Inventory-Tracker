@@ -4,10 +4,7 @@ const transactionAdapter = createEntityAdapter({
   selectId: (transaction) => transaction.product_details.name,
 });
 
-const initialState = transactionAdapter.getInitialState({
-  status: "idle",
-  error: null,
-});
+const initialState = transactionAdapter.getInitialState();
 
 const transactionReducer = createSlice({
   name: "transactions",
