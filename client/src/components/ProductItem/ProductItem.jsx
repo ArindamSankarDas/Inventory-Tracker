@@ -39,7 +39,7 @@ const ProductItem = ({ productDetails }) => {
       return;
     }
 
-    dispatch(updateProduct(productDetails.id, name, itemCount, price));
+    dispatch(updateProduct({ id: productDetails.id, ...itemState }));
     setToEdit(false);
   };
 

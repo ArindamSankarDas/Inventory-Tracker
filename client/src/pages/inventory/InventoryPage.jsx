@@ -10,6 +10,7 @@ import {
   selectStateError,
   selectStateStatus,
 } from "../../features/products/productSlice";
+import AddProduct from "../../components/AddProduct/AddProduct";
 
 const InventoryPage = () => {
   const [addItem, setAddItem] = useState(false);
@@ -38,17 +39,13 @@ const InventoryPage = () => {
         title={"Inventory"}
         setNewItem={setAddItem}
       />
-
+      <AddProduct newProduct={addItem} setNewItem={setAddItem} />
       {productStatus === "loading" ? (
         <span className='loader relative top-14 left-1/2 -translate-x-1/2'></span>
       ) : productStatus === "succeeded" ? (
-        <ItemsTable
-          newProduct={addItem}
-          setNewItem={setAddItem}
-          data={isActive ? products : seasonalProducts}
-        />
+        <ItemsTable data={isActive ? products : seasonalProducts} />
       ) : (
-        <h1>{productError}</h1>
+        <h1 className='text-center mt-10 font-semibold'>{productError}</h1>
       )}
     </section>
   );

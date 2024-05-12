@@ -45,38 +45,19 @@ export const deleteProduct = createAsyncThunk(
   }
 );
 
+export const updateProduct = createAsyncThunk(
+  "products/updateProduct",
+  async (updatedData) => {
+    const response = await axios.put("/api/inventory", updatedData);
+
+    return response.data;
+  }
+);
+
 const productSlice = createSlice({
   name: "products",
   initialState,
-  reducers: {
-    updateProduct: {
-      reducer(state, action) {
-        const { id, name, count, price } = action.payload;
-
-        if (!name || !count || !price) {
-          alert(
-            "None of the fields can be empty || Just delete if you want to clear something"
-          );
-          return;
-        }
-
-        productAdapter.updateOne(state, {
-          id,
-          changes: { name, count, price },
-        });
-      },
-      prepare(id, name, count, price) {
-        return {
-          payload: {
-            id,
-            name,
-            count,
-            price,
-          },
-        };
-      },
-    },
-  },
+  reducers: {},
 
   extraReducers: (builder) => {
     builder
@@ -86,9 +67,15 @@ const productSlice = createSlice({
       .addCase(fetchProducts.fulfilled, (state, action) => {
         state.status = "succeeded";
 
+        if (!action.payload) {
+          productAdapter.upsertMany(state, []);
+          return;
+        }
+
         const loadedProducts = action.payload.map((product) => {
           product.id = product._id;
           delete product._id;
+          delete product.__v;
 
           return product;
         });
@@ -101,34 +88,37 @@ const productSlice = createSlice({
       })
       .addCase(addNewProduct.fulfilled, (state, action) => {
         action.payload.id = action.payload._id;
+        delete action.payload.__v;
         delete action.payload._id;
 
-        productAdapter.addOne(state, action.payload);
-      })
-      .addCase(addNewProduct.rejected, (_state, action) => {
-        const getStatus = action.error.message.match(/\d+/g);
+        if (action.payload.id in state.entities) {
+          productAdapter.updateOne(state, {
+            id: action.payload.id,
+            changes: { ...action.payload },
+          });
 
-        if (getStatus === "400") {
-          alert(
-            "If name already exists and the price is different give it new name as it is a new product altogether due to price difference"
-          );
-        } else if (getStatus === "406") {
-          alert("name, price and count can not be empty");
-        } else if (getStatus === "422") {
-          alert("Syntax is correct but data is invalid");
-        } else {
-          alert("Server ERROR " + getStatus);
+          state.status = "idle";
+
+          return;
         }
+
+        productAdapter.addOne(state, action.payload);
       })
       .addCase(deleteProduct.fulfilled, (state, action) => {
         const { _id: id } = action.payload;
 
         productAdapter.removeOne(state, id);
+      })
+      .addCase(updateProduct.fulfilled, (state, action) => {
+        const { _id: id, name, price, itemCount } = action.payload;
+
+        productAdapter.updateOne(state, {
+          id,
+          changes: { name, price, itemCount },
+        });
       });
   },
 });
-
-export const { updateProduct } = productSlice.actions;
 
 export const { selectAll: selectAllProducts } = productAdapter.getSelectors(
   (state) => state.products

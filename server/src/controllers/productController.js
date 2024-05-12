@@ -4,7 +4,7 @@ const getAllProducts = async (req, res) => {
   const products = await Product.find({}).exec();
 
   if (!products?.length) {
-    return res.status(404).json({ message: "No products available" });
+    return res.status(204).json({ message: "No products available" });
   }
 
   res.status(200).json(products);
@@ -27,7 +27,7 @@ const createProduct = async (req, res) => {
         .updateOne({ itemCount: alreadyExists.itemCount + itemCount })
         .exec();
 
-      return res.status(201).json({ message: "Inventory Increased" });
+      return res.status(201).json(alreadyExists);
     }
 
     if (alreadyExists && price !== alreadyExists.price) {
@@ -53,9 +53,9 @@ const createProduct = async (req, res) => {
 };
 
 const updateProduct = async (req, res) => {
-  const { productId, name, price, itemCount } = req.body;
+  const { id, name, price, itemCount } = req.body;
 
-  if (!productId) {
+  if (!id) {
     return res.status(406).json({ message: "Filter data can not be empty" });
   }
 
@@ -67,13 +67,13 @@ const updateProduct = async (req, res) => {
     if (itemCount) updatedDoc.itemCount = itemCount;
 
     const product = await Product.findByIdAndUpdate(
-      productId,
+      id,
       { $set: updatedDoc },
       { new: true }
     ).exec();
 
     if (product) {
-      return res.status(200).json({ message: "Product update" });
+      return res.status(200).json(product);
     }
 
     res.status(400).json({ message: "Invalid data" });
