@@ -4,9 +4,11 @@ import SubHeader from "../../components/SubHeader/SubHeader";
 import ItemsTable from "../../components/ItemsTable/ItemsTable";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  fetchData,
+  fetchProducts,
   selectAllProducts,
   selectSeasonalProducts,
+  selectStateError,
+  selectStateStatus,
 } from "../../features/products/productSlice";
 
 const InventoryPage = () => {
@@ -17,13 +19,17 @@ const InventoryPage = () => {
 
   const products = useSelector(selectAllProducts);
   const seasonalProducts = useSelector(selectSeasonalProducts);
+  const productStatus = useSelector(selectStateStatus);
+  const productError = useSelector(selectStateError);
 
   useEffect(() => {
-    dispatch(fetchData());
-  });
+    if (productStatus === "idle") {
+      dispatch(fetchProducts());
+    }
+  }, [dispatch, productStatus]);
 
   return (
-    <section className='flex-1 lg:px-[15rem] lg:py-10'>
+    <section className='relative flex-1 lg:px-[15rem] lg:py-10'>
       <SubHeader
         isToggleActive={isActive}
         handleToggleActive={setIsActive}
@@ -33,11 +39,17 @@ const InventoryPage = () => {
         setNewItem={setAddItem}
       />
 
-      <ItemsTable
-        newProduct={addItem}
-        setNewItem={setAddItem}
-        data={isActive ? products : seasonalProducts}
-      />
+      {productStatus === "loading" ? (
+        <span className='loader relative top-14 left-1/2 -translate-x-1/2'></span>
+      ) : productStatus === "succeeded" ? (
+        <ItemsTable
+          newProduct={addItem}
+          setNewItem={setAddItem}
+          data={isActive ? products : seasonalProducts}
+        />
+      ) : (
+        <h1>{productError}</h1>
+      )}
     </section>
   );
 };
