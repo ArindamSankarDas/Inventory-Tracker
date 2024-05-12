@@ -15,13 +15,10 @@ const initialState = productAdapter.getInitialState({
   error: null,
 });
 
-export const fetchData = createAsyncThunk(
+export const fetchProducts = createAsyncThunk(
   "products/fetchProducts",
   async () => {
     const response = await axios.get("/api/inventory");
-
-    console.log(response.data);
-
     return response.data;
   }
 );
@@ -87,6 +84,29 @@ const productSlice = createSlice({
       },
     },
   },
+
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchProducts.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchProducts.fulfilled, (state, action) => {
+        state.status = "succeeded";
+
+        const loadedProducts = action.payload.map((product) => {
+          product.id = product._id;
+          delete product._id;
+
+          return product;
+        });
+
+        productAdapter.upsertMany(state, loadedProducts);
+      })
+      .addCase(fetchProducts.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      });
+  },
 });
 
 export const { addProduct, deleteProduct, updateProduct } =
@@ -95,6 +115,9 @@ export const { addProduct, deleteProduct, updateProduct } =
 export const { selectAll: selectAllProducts } = productAdapter.getSelectors(
   (state) => state.products
 );
+
+export const selectStateStatus = (state) => state.products.status;
+export const selectStateError = (state) => state.products.error;
 
 export const selectSeasonalProducts = createSelector(
   [selectAllProducts],
