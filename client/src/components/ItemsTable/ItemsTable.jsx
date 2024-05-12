@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { useDispatch } from "react-redux";
 
-import { addProduct } from "../../features/products/productSlice";
+import { addNewProduct } from "../../features/products/productSlice";
 
 import FormInput from "../FormInput/FormInput";
 import ProductItem from "../ProductItem/ProductItem";
@@ -38,13 +38,13 @@ const ItemsTable = ({ newProduct, setNewItem, data }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const { itemCount, name, price, isSeasonal } = formState;
+    const { itemCount, name, price } = formState;
 
     if (!name || !itemCount || !price) {
       return;
     }
 
-    dispatch(addProduct(name, itemCount, price, isSeasonal));
+    dispatch(addNewProduct(formState));
     setFormState({
       name: "",
       itemCount: "",

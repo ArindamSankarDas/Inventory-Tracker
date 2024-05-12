@@ -31,10 +31,7 @@ const createProduct = async (req, res) => {
     }
 
     if (alreadyExists && price !== alreadyExists.price) {
-      return res.status(400).json({
-        message:
-          "If name already exists and the price is different give it new name as it is a new product altogether due to price difference",
-      });
+      return res.sendStatus(400);
     }
 
     let product = null;
@@ -46,12 +43,12 @@ const createProduct = async (req, res) => {
     }
 
     if (product) {
-      return res.status(201).json({ message: "Product recorded" });
+      return res.status(201).json(product);
     }
 
-    res.status(400).json({ message: "Invalid data" });
+    res.sendStatus(422);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.sendStatus(500);
   }
 };
 
@@ -96,7 +93,7 @@ const deleteProduct = async (req, res) => {
     const product = await Product.findByIdAndDelete(id).exec();
 
     if (product) {
-      res.status(200).json({ message: "Inventory decreased" });
+      res.status(200).json(product);
     } else {
       res.status(400).json({ message: "Invalid data" });
     }
