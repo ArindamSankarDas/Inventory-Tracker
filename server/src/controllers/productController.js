@@ -20,26 +20,40 @@ const createProduct = async (req, res) => {
   }
 
   try {
-    const alreadyExists = await Product.findOne({ name }).exec();
+    const existingProduct = await Product.findOne({ name }).exec();
 
-    if (alreadyExists && price === alreadyExists.price) {
-      await alreadyExists
-        .updateOne({ itemCount: alreadyExists.itemCount + itemCount })
-        .exec();
+    if (existingProduct) {
+      if (
+        price === existingProduct?.price &&
+        isSeasonal === existingProduct?.isSeasonal
+      ) {
+        await existingProduct
+          .updateOne({
+            itemCount: existingProduct.itemCount + itemCount,
+          })
+          .exec();
 
-      return res.status(201).json(alreadyExists);
-    }
-
-    if (alreadyExists && price !== alreadyExists.price) {
-      return res.sendStatus(400);
+        return res.status(201).json(existingProduct);
+      } else {
+        return res.sendStatus(400);
+      }
     }
 
     let product = null;
 
     if (isSeasonal) {
-      product = await Product.create({ name, price, itemCount, isSeasonal });
+      product = await Product.create({
+        name,
+        price,
+        itemCount,
+        isSeasonal,
+      });
     } else {
-      product = await Product.create({ name, price, itemCount });
+      product = await Product.create({
+        name,
+        price,
+        itemCount,
+      });
     }
 
     if (product) {
