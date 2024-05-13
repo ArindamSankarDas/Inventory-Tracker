@@ -32,7 +32,7 @@ const initiateNewTransaction = async (req, res) => {
       return res.sendStatus(422);
     }
 
-    res.sendStatus(201);
+    res.status(201).json(transaction);
   } catch (err) {
     res.sendStatus(500);
   }
