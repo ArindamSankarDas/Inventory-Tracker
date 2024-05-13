@@ -20,11 +20,11 @@ const TransactionPage = () => {
 
   const dispatch = useDispatch();
 
-  const handleSubmit = (e, customer, product) => {
+  const handleSubmit = (e, customer_info, product_info) => {
     e.preventDefault();
 
-    const { name: customerName, phone, address } = customer;
-    const { name: productName, count, price } = product;
+    const { name: customerName, phone, address } = customer_info;
+    const { name: productName, count, price } = product_info;
 
     if (
       !customerName ||
@@ -46,7 +46,13 @@ const TransactionPage = () => {
       buyOrSell = "sell";
     }
 
-    dispatch(addNewTransaction(customer, product, buyOrSell));
+    dispatch(
+      addNewTransaction({
+        customer_info,
+        product_info,
+        transactionType: buyOrSell,
+      })
+    );
 
     setCustomerDetails({
       name: "",

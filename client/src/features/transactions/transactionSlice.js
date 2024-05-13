@@ -1,52 +1,85 @@
-import { createEntityAdapter, createSlice, nanoid } from "@reduxjs/toolkit";
+import {
+  createEntityAdapter,
+  createSlice,
+  createAsyncThunk,
+} from "@reduxjs/toolkit";
 
-const transactionAdapter = createEntityAdapter({
-  selectId: (transaction) => transaction.product_details.name,
+import axios from "axios";
+
+const transactionAdapter = createEntityAdapter({});
+
+const initialState = transactionAdapter.getInitialState({
+  status: "idle", // idle | loading | succeeded | failed
+  error: null,
 });
 
-const initialState = transactionAdapter.getInitialState();
+export const fetchTransactions = createAsyncThunk(
+  "transactions/fetchTransactions",
+  async () => {
+    const response = await axios.get("/api/transactions");
+    return response.data;
+  }
+);
+
+export const addNewTransaction = createAsyncThunk(
+  "transactions/addTransaction",
+  async (transactionData) => {
+    const response = await axios.post("/api/transactions", transactionData);
+
+    return response.data;
+  }
+);
 
 const transactionReducer = createSlice({
   name: "transactions",
   initialState,
-  reducers: {
-    addNewTransaction: {
-      reducer(state, action) {
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchTransactions.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchTransactions.fulfilled, (state, action) => {
+        state.status = "succeeded";
+
+        if (!action.payload) {
+          transactionAdapter.upsertMany(state, []);
+          return;
+        }
+
+        const loadedTransactions = action.payload.map((transaction) => {
+          transaction.id = transaction._id;
+          delete transaction._id;
+          delete transaction.__v;
+
+          return transaction;
+        });
+
+        transactionAdapter.upsertMany(state, loadedTransactions);
+      })
+      .addCase(fetchTransactions.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(addNewTransaction.fulfilled, (state, action) => {
         if (!action.payload) {
           return;
         }
 
-        const { id } = action.payload;
+        action.payload.id = action.payload._id;
+        delete action.payload.__v;
+        delete action.payload._id;
 
-        state.ids.push(id);
-        state.entities[id] = action.payload;
-      },
-      prepare(customerDetails, productDetails, transactionType) {
-        return {
-          payload: {
-            id: nanoid(6),
-            date: new Date().toISOString(),
-            transactionType,
-            customer_details: {
-              name: customerDetails.name,
-              phone: Number(customerDetails.phone),
-              address: customerDetails.address,
-            },
-            product_details: {
-              name: productDetails.name,
-              price: Number(productDetails.price),
-              count: Number(productDetails.count),
-            },
-          },
-        };
-      },
-    },
+        transactionAdapter.addOne(state, action.payload);
+        state.status = "idle";
+      });
   },
 });
 
-export const { addNewTransaction } = transactionReducer.actions;
-
 export const { selectAll: selectAllTransactions } =
   transactionAdapter.getSelectors((state) => state.transactions);
+
+export const selectTransactionStatus = (state) => state.transactions.status;
+export const selectTransactionError = (state) => state.transactions.error;
 
 export default transactionReducer.reducer;

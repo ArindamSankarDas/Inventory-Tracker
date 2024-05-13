@@ -1,18 +1,41 @@
-import HistoryItemsTable from "../../components/HistoryItemsTable/HistoryItemsTable";
-import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
-import { selectAllTransactions } from "../../features/transactions/transactionSlice";
+import {
+  fetchTransactions,
+  selectAllTransactions,
+  selectTransactionError,
+  selectTransactionStatus,
+} from "../../features/transactions/transactionSlice";
+
+import HistoryItemsTable from "../../components/HistoryItemsTable/HistoryItemsTable";
 
 const HistoryPage = () => {
   const transactionHistory = useSelector(selectAllTransactions);
-  console.log(transactionHistory);
+  const transactionStatus = useSelector(selectTransactionStatus);
+  const transactionError = useSelector(selectTransactionError);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (transactionStatus === "idle") {
+      dispatch(fetchTransactions());
+    }
+  }, [dispatch, transactionStatus]);
 
   return (
     <section className='flex-1 min-h-full lg:px-20'>
       <h1 className='mt-10 text-2xl font-bold px-4 lg:px-0'>
         Transaction History
       </h1>
-      <HistoryItemsTable data={transactionHistory} />
+
+      {transactionStatus === "loading" ? (
+        <span className='loader relative top-14 left-1/2 -translate-x-1/2'></span>
+      ) : transactionStatus === "succeeded" ? (
+        <HistoryItemsTable data={transactionHistory} />
+      ) : (
+        <h1 className='text-center mt-10 font-semibold'>{transactionError}</h1>
+      )}
     </section>
   );
 };

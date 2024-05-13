@@ -15,19 +15,30 @@ const HistoryItemsTable = ({ data }) => {
           </tr>
         </thead>
         <tbody>
-          {data.map((transaction) => (
-            <tr key={transaction.id} className='h-14 text-lg bg-secondary'>
-              <td>{format(formatISO(transaction.date, { representation: "date" }), "dd-MM-yy")}</td>
-              <td className='capitalize'>{transaction.transactionType}</td>
-              <td className='relative w-[15rem] lg:w-[25rem]'>
-                {transaction.product_details.name}
-              </td>
-              <td>{transaction.product_details.count}</td>
-              <td className='relative'>
-                &#8377; {transaction.product_details.price}
-              </td>
+          {!data?.length ? (
+            <tr className='absolute w-[90%] mt-3 left-1/2 -translate-x-1/2'>
+              No Items available
             </tr>
-          ))}
+          ) : (
+            data.map((transaction) => (
+              <tr key={transaction.id} className='h-14 text-lg bg-secondary'>
+                <td>
+                  {format(
+                    formatISO(transaction.date, { representation: "date" }),
+                    "dd-MM-yy"
+                  )}
+                </td>
+                <td className='capitalize'>{transaction.transactionType}</td>
+                <td className='relative w-[15rem] lg:w-[25rem]'>
+                  {transaction.product_details.name}
+                </td>
+                <td>{transaction.product_details.count}</td>
+                <td className='relative'>
+                  &#8377; {transaction.product_details.price}
+                </td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </div>
