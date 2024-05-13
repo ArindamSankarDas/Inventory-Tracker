@@ -26,7 +26,11 @@ export const fetchProducts = createAsyncThunk(
 export const addNewProduct = createAsyncThunk(
   "products/addProducts",
   async (data) => {
-    const response = await axios.post("/api/inventory", data);
+    const response = await axios.post("/api/inventory", {
+      ...data,
+      name: data.name.trim().toLowerCase(),
+      isSeasonal: Boolean(data.isSeasonal),
+    });
 
     return response.data;
   }
@@ -48,7 +52,10 @@ export const deleteProduct = createAsyncThunk(
 export const updateProduct = createAsyncThunk(
   "products/updateProduct",
   async (updatedData) => {
-    const response = await axios.put("/api/inventory", updatedData);
+    const response = await axios.put("/api/inventory", {
+      ...updatedData,
+      name: updatedData.name.trim().toLowerCase(),
+    });
 
     return response.data;
   }
@@ -94,7 +101,7 @@ const productSlice = createSlice({
         if (action.payload.id in state.entities) {
           productAdapter.updateOne(state, {
             id: action.payload.id,
-            changes: { ...action.payload },
+            changes: { itemCount: action.payload.itemCount },
           });
 
           state.status = "idle";

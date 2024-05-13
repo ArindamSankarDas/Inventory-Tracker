@@ -70,7 +70,7 @@ const ProductItem = ({ productDetails }) => {
         </section>
 
         {!toEdit ? (
-          name
+          <span className='capitalize'>{name}</span>
         ) : (
           <div className='px-4 py-1 text-center'>
             <FormInput
