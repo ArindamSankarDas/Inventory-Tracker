@@ -18,6 +18,7 @@ app.use(express.json());
 
 // request routes
 app.use("/api/inventory", require("./routes/productRoute"));
+app.use("/api/transactions", require("./routes/transactionRoute"));
 
 // establishing database connection
 mongoose.connection.once("open", () => {
