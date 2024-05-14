@@ -102,7 +102,7 @@ const AddProduct = ({ newProduct, setNewItem }) => {
           <select
             name='isSeasonal'
             id='seasonal'
-            className='bg-gray-300 w-full px-4 py-2  text-lg font-medium rounded-md placeholder:text-gray-600'
+            className='bg-gray-300 w-full px-4 py-2 text-lg font-medium rounded-md placeholder:text-gray-600'
             value={formState.isSeasonal}
             onChange={(e) =>
               setFormState((prevState) => {

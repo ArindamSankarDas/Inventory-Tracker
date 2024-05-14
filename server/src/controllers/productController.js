@@ -124,10 +124,11 @@ const decreaseProductCount = async (req, res) => {
         isSeasonal === existingProduct?.isSeasonal &&
         existingProduct?.itemCount - itemCount === 0
       ) {
-        const productData = await existingProduct
-          .deleteOne({ id: existingProduct.id })
-          .exec();
-        return res.status(200).json(productData);
+        await existingProduct.updateOne({ $set: { itemCount: 0 } }).exec();
+        res.status(200).json(existingProduct);
+        await existingProduct.deleteOne().exec();
+
+        return;
       } else {
         return res.sendStatus(400);
       }

@@ -26,7 +26,6 @@ export const fetchProducts = createAsyncThunk(
 export const addNewProduct = createAsyncThunk(
   "products/addProducts",
   async (data) => {
-    console.log(data);
     const response = await axios.post("/api/inventory", {
       ...data,
       name: data.name.trim().toLowerCase(),
@@ -112,6 +111,7 @@ const productSlice = createSlice({
         state.error = action.error.message;
       })
       .addCase(addNewProduct.fulfilled, (state, action) => {
+        state.status = "idle";
         action.payload.id = action.payload._id;
         delete action.payload.__v;
         delete action.payload._id;
@@ -122,18 +122,12 @@ const productSlice = createSlice({
             changes: { itemCount: action.payload.itemCount },
           });
 
-          state.status = "idle";
-
           return;
         }
 
         productAdapter.addOne(state, action.payload);
       })
       .addCase(sellProducts.fulfilled, (state, action) => {
-        if (!action.payload) {
-          return;
-        }
-
         action.payload.id = action.payload._id;
         delete action.payload.__v;
         delete action.payload._id;
@@ -146,14 +140,14 @@ const productSlice = createSlice({
             id: action.payload.id,
             changes: { itemCount: action.payload.itemCount },
           });
-
           state.status = "idle";
-
           return;
         }
 
-        state.status = "idle";
+        console.log("sell2");
+
         productAdapter.removeOne(state, action.payload.id);
+        state.status = "idle";
       })
       .addCase(deleteProduct.fulfilled, (state, action) => {
         const { _id: id } = action.payload;

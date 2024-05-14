@@ -20,6 +20,7 @@ const TransactionPage = () => {
     name: "",
     itemCount: "",
     price: "",
+    isSeasonal: false,
   });
 
   const dispatch = useDispatch();
@@ -47,38 +48,31 @@ const TransactionPage = () => {
     if (isActive) {
       buyOrSell = "buy";
 
-      dispatch(
-        addNewTransaction({
-          customer_info,
-          product_info,
-          transactionType: buyOrSell,
-        })
-      );
-      dispatch(addNewProduct({ ...product_info, isSeasonal: false }));
+      dispatch(addNewProduct(product_info));
     } else {
       buyOrSell = "sell";
 
-      dispatch(
-        addNewTransaction({
-          customer_info,
-          product_info,
-          transactionType: buyOrSell,
-        })
-      );
-      dispatch(sellProducts({ ...product_info, isSeasonal: false }));
+      dispatch(sellProducts(product_info));
     }
+    dispatch(
+      addNewTransaction({
+        customer_info,
+        product_info,
+        transactionType: buyOrSell,
+      })
+    );
+    setCustomerDetails({
+      name: "",
+      phone: "",
+      address: "",
+    });
 
-    // setCustomerDetails({
-    //   name: "",
-    //   phone: "",
-    //   address: "",
-    // });
-
-    // setProductDetails({
-    //   name: "",
-    //   itemCount: "",
-    //   price: "",
-    // });
+    setProductDetails({
+      name: "",
+      itemCount: "",
+      price: "",
+      isSeasonal: false,
+    });
   };
 
   return (
@@ -162,19 +156,7 @@ const TransactionPage = () => {
                   })
                 }
               />
-              <FormInput
-                holderName={"Price"}
-                inputType={"number"}
-                inputValue={productDetails.price}
-                onInputChange={(e) =>
-                  setProductDetails((prevState) => {
-                    return {
-                      ...prevState,
-                      price: e.target.value,
-                    };
-                  })
-                }
-              />
+
               <FormInput
                 holderName={"No. of Items"}
                 inputType={"number"}
@@ -188,6 +170,36 @@ const TransactionPage = () => {
                   })
                 }
               />
+              <FormInput
+                holderName={"Price"}
+                inputType={"number"}
+                inputValue={productDetails.price}
+                onInputChange={(e) =>
+                  setProductDetails((prevState) => {
+                    return {
+                      ...prevState,
+                      price: e.target.value,
+                    };
+                  })
+                }
+              />
+              <select
+                name='isSeasonal'
+                id='seasonal'
+                className='bg-gray-300 w-full px-4 py-2 text-lg font-medium rounded-md placeholder:text-gray-600'
+                value={productDetails.isSeasonal}
+                onChange={(e) =>
+                  setProductDetails((prevState) => {
+                    return {
+                      ...prevState,
+                      isSeasonal: e.target.value,
+                    };
+                  })
+                }
+              >
+                <option value={false}>Not Seasonal</option>
+                <option value={true}>Seasonal</option>
+              </select>
             </div>
           </section>
           <button className='px-10 mt-10 py-2 bg-tertiary text-white font-semibold text-xl rounded-md'>

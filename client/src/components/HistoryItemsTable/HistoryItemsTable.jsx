@@ -32,7 +32,7 @@ const HistoryItemsTable = ({ data }) => {
                 <td className='relative w-[15rem] lg:w-[25rem]'>
                   {transaction.product_details.name}
                 </td>
-                <td>{transaction.product_details.count}</td>
+                <td>{transaction.product_details.itemCount}</td>
                 <td className='relative'>
                   &#8377; {transaction.product_details.price}
                 </td>
