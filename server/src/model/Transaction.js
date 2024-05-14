@@ -11,7 +11,7 @@ const transactionSchema = new mongoose.Schema({
   product_details: {
     name: String,
     price: Number,
-    count: Number,
+    itemCount: Number,
   },
 });
 
