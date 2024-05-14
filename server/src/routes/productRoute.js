@@ -8,6 +8,7 @@ router
   .get(productController.getAllProducts)
   .post(productController.createProduct)
   .put(productController.updateProduct)
-  .delete(productController.deleteProduct);
+  .delete(productController.deleteProduct)
+  .patch(productController.decreaseProductCount);
 
 module.exports = router;

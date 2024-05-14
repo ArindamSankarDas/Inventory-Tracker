@@ -96,6 +96,47 @@ const updateProduct = async (req, res) => {
   }
 };
 
+const decreaseProductCount = async (req, res) => {
+  const { name, price, itemCount, isSeasonal } = req.body;
+
+  if (!name || !price || !itemCount) {
+    return res.sendStatus(406);
+  }
+
+  try {
+    const existingProduct = await Product.findOne({ name }).exec();
+
+    if (existingProduct) {
+      if (
+        price === existingProduct?.price &&
+        isSeasonal === existingProduct?.isSeasonal &&
+        existingProduct?.itemCount - itemCount !== 0
+      ) {
+        await existingProduct
+          .updateOne({
+            itemCount: existingProduct.itemCount - itemCount,
+          })
+          .exec();
+
+        return res.status(200).json(existingProduct);
+      } else if (
+        price === existingProduct?.price &&
+        isSeasonal === existingProduct?.isSeasonal &&
+        existingProduct?.itemCount - itemCount === 0
+      ) {
+        const productData = await existingProduct
+          .deleteOne({ id: existingProduct.id })
+          .exec();
+        return res.status(200).json(productData);
+      } else {
+        return res.sendStatus(400);
+      }
+    }
+  } catch (error) {
+    res.sendStatus(500);
+  }
+};
+
 const deleteProduct = async (req, res) => {
   const { id } = req.body;
 
@@ -121,4 +162,5 @@ module.exports = {
   createProduct,
   updateProduct,
   deleteProduct,
+  decreaseProductCount,
 };
