@@ -129,23 +129,23 @@ const productSlice = createSlice({
       })
       .addCase(sellProducts.fulfilled, (state, action) => {
         state.status = "idle";
-        action.payload.id = action.payload._id;
-        delete action.payload.__v;
-        delete action.payload._id;
+        const { _id: id, itemCount } = action.payload;
+        console.log(action);
 
-        if (
-          action.payload.id in state.entities &&
-          action.payload.itemCount !== 0
-        ) {
+        if (id in state.entities && itemCount !== 0) {
           productAdapter.updateOne(state, {
-            id: action.payload.id,
-            changes: { itemCount: action.payload.itemCount },
+            id,
+            changes: { itemCount },
           });
 
           return;
         }
 
-        productAdapter.removeOne(state, action.payload.id);
+        if (id in state.entities && itemCount === 0) {
+          console.log(action);
+          productAdapter.removeOne(state, id);
+          return;
+        }
       })
       .addCase(deleteProduct.fulfilled, (state, action) => {
         const { _id: id } = action.payload;

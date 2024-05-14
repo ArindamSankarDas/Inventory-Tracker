@@ -4,7 +4,7 @@ const getAllProducts = async (req, res) => {
   const products = await Product.find({}).exec();
 
   if (!products?.length) {
-    return res.status(204).json({ message: "No products available" });
+    return res.sendStatus(204);
   }
 
   res.status(200).json(products);
@@ -14,9 +14,7 @@ const createProduct = async (req, res) => {
   const { name, price, itemCount, isSeasonal } = req.body;
 
   if (!name || !price || !itemCount) {
-    return res
-      .status(406)
-      .json({ message: "name, price and count can not be empty" });
+    return res.sendStatus(406);
   }
 
   try {
@@ -106,33 +104,42 @@ const decreaseProductCount = async (req, res) => {
   try {
     const existingProduct = await Product.findOne({ name }).exec();
 
-    if (existingProduct) {
-      if (
-        price === existingProduct?.price &&
-        isSeasonal === existingProduct?.isSeasonal &&
-        existingProduct?.itemCount - itemCount !== 0
-      ) {
-        await existingProduct
-          .updateOne({
-            itemCount: existingProduct.itemCount - itemCount,
-          })
-          .exec();
-
-        return res.status(200).json(existingProduct);
-      } else if (
-        price === existingProduct?.price &&
-        isSeasonal === existingProduct?.isSeasonal &&
-        existingProduct?.itemCount - itemCount === 0
-      ) {
-        await existingProduct.updateOne({ $set: { itemCount: 0 } }).exec();
-        res.status(200).json(existingProduct);
-        await existingProduct.deleteOne().exec();
-
-        return;
-      } else {
-        return res.sendStatus(400);
-      }
+    if (!existingProduct) {
+      return res.sendStatus(404);
     }
+
+    if (
+      price === existingProduct?.price &&
+      isSeasonal === existingProduct?.isSeasonal &&
+      existingProduct?.itemCount - itemCount !== 0
+    ) {
+      await existingProduct
+        .updateOne({ itemCount: existingProduct.itemCount - itemCount })
+        .exec();
+
+      const updatedProduct = await Product.findByIdAndUpdate({
+        _id: existingProduct._id,
+      });
+
+      return res.status(200).json(updatedProduct);
+    }
+
+    if (
+      price !== existingProduct?.price ||
+      isSeasonal ||
+      existingProduct?.isSeasonal ||
+      existingProduct?.itemCount - itemCount === 0
+    ) {
+      return res.sendStatus(400);
+    }
+
+    await existingProduct.updateOne({ itemCount: 0 }).exec();
+
+    const deletedProduct = await Product.findByIdAndDelete({
+      _id: existingProduct._id,
+    });
+
+    res.status(200).json(deletedProduct);
   } catch (error) {
     res.sendStatus(500);
   }
@@ -142,7 +149,7 @@ const deleteProduct = async (req, res) => {
   const { id } = req.body;
 
   if (!id) {
-    return res.status(406).json({ message: "Id field can not be empty" });
+    return res.sendStatus(406);
   }
 
   try {
@@ -151,10 +158,10 @@ const deleteProduct = async (req, res) => {
     if (product) {
       res.status(200).json(product);
     } else {
-      res.status(400).json({ message: "Invalid data" });
+      res.sendStatus(400);
     }
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.sendStatus(500);
   }
 };
 
