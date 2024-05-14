@@ -128,6 +128,7 @@ const productSlice = createSlice({
         productAdapter.addOne(state, action.payload);
       })
       .addCase(sellProducts.fulfilled, (state, action) => {
+        state.status = "idle";
         action.payload.id = action.payload._id;
         delete action.payload.__v;
         delete action.payload._id;
@@ -140,14 +141,11 @@ const productSlice = createSlice({
             id: action.payload.id,
             changes: { itemCount: action.payload.itemCount },
           });
-          state.status = "idle";
+
           return;
         }
 
-        console.log("sell2");
-
         productAdapter.removeOne(state, action.payload.id);
-        state.status = "idle";
       })
       .addCase(deleteProduct.fulfilled, (state, action) => {
         const { _id: id } = action.payload;
