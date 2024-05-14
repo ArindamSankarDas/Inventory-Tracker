@@ -125,21 +125,20 @@ const decreaseProductCount = async (req, res) => {
     }
 
     if (
-      price !== existingProduct?.price ||
-      isSeasonal ||
-      existingProduct?.isSeasonal ||
+      price === existingProduct?.price &&
+      isSeasonal === existingProduct?.isSeasonal &&
       existingProduct?.itemCount - itemCount === 0
     ) {
-      return res.sendStatus(400);
+      await existingProduct.updateOne({ itemCount: 0 }).exec();
+
+      const deletedProduct = await Product.findByIdAndDelete({
+        _id: existingProduct._id,
+      });
+
+      return res.status(200).json(deletedProduct);
     }
 
-    await existingProduct.updateOne({ itemCount: 0 }).exec();
-
-    const deletedProduct = await Product.findByIdAndDelete({
-      _id: existingProduct._id,
-    });
-
-    res.status(200).json(deletedProduct);
+    res.sendStatus(400);
   } catch (error) {
     res.sendStatus(500);
   }

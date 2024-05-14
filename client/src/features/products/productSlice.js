@@ -130,7 +130,6 @@ const productSlice = createSlice({
       .addCase(sellProducts.fulfilled, (state, action) => {
         state.status = "idle";
         const { _id: id, itemCount } = action.payload;
-        console.log(action);
 
         if (id in state.entities && itemCount !== 0) {
           productAdapter.updateOne(state, {
@@ -142,7 +141,6 @@ const productSlice = createSlice({
         }
 
         if (id in state.entities && itemCount === 0) {
-          console.log(action);
           productAdapter.removeOne(state, id);
           return;
         }
