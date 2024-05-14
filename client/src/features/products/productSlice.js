@@ -26,9 +26,27 @@ export const fetchProducts = createAsyncThunk(
 export const addNewProduct = createAsyncThunk(
   "products/addProducts",
   async (data) => {
+    console.log(data);
     const response = await axios.post("/api/inventory", {
       ...data,
       name: data.name.trim().toLowerCase(),
+      price: Number(data.price),
+      itemCount: Number(data.itemCount),
+      isSeasonal: Boolean(data.isSeasonal),
+    });
+
+    return response.data;
+  }
+);
+
+export const sellProducts = createAsyncThunk(
+  "products/sellProducts",
+  async (data) => {
+    const response = await axios.patch("/api/inventory", {
+      ...data,
+      name: data.name.trim().toLowerCase(),
+      price: Number(data.price),
+      itemCount: Number(data.itemCount),
       isSeasonal: Boolean(data.isSeasonal),
     });
 
@@ -110,6 +128,32 @@ const productSlice = createSlice({
         }
 
         productAdapter.addOne(state, action.payload);
+      })
+      .addCase(sellProducts.fulfilled, (state, action) => {
+        if (!action.payload) {
+          return;
+        }
+
+        action.payload.id = action.payload._id;
+        delete action.payload.__v;
+        delete action.payload._id;
+
+        if (
+          action.payload.id in state.entities &&
+          action.payload.itemCount !== 0
+        ) {
+          productAdapter.updateOne(state, {
+            id: action.payload.id,
+            changes: { itemCount: action.payload.itemCount },
+          });
+
+          state.status = "idle";
+
+          return;
+        }
+
+        state.status = "idle";
+        productAdapter.removeOne(state, action.payload.id);
       })
       .addCase(deleteProduct.fulfilled, (state, action) => {
         const { _id: id } = action.payload;

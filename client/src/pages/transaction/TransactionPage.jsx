@@ -3,6 +3,10 @@ import SubHeader from "../../components/SubHeader/SubHeader";
 import FormInput from "../../components/FormInput/FormInput";
 import { useDispatch } from "react-redux";
 import { addNewTransaction } from "../../features/transactions/transactionSlice";
+import {
+  addNewProduct,
+  sellProducts,
+} from "../../features/products/productSlice";
 
 const TransactionPage = () => {
   const [isActive, setIsActive] = useState(true);
@@ -14,7 +18,7 @@ const TransactionPage = () => {
 
   const [productDetails, setProductDetails] = useState({
     name: "",
-    count: "",
+    itemCount: "",
     price: "",
   });
 
@@ -24,14 +28,14 @@ const TransactionPage = () => {
     e.preventDefault();
 
     const { name: customerName, phone, address } = customer_info;
-    const { name: productName, count, price } = product_info;
+    const { name: productName, itemCount, price } = product_info;
 
     if (
       !customerName ||
       !phone ||
       !address ||
       !productName ||
-      !count ||
+      !itemCount ||
       !price
     ) {
       alert("No fields can be empty");
@@ -42,29 +46,39 @@ const TransactionPage = () => {
 
     if (isActive) {
       buyOrSell = "buy";
+
+      dispatch(
+        addNewTransaction({
+          customer_info,
+          product_info,
+          transactionType: buyOrSell,
+        })
+      );
+      dispatch(addNewProduct({ ...product_info, isSeasonal: false }));
     } else {
       buyOrSell = "sell";
+
+      dispatch(
+        addNewTransaction({
+          customer_info,
+          product_info,
+          transactionType: buyOrSell,
+        })
+      );
+      dispatch(sellProducts({ ...product_info, isSeasonal: false }));
     }
 
-    dispatch(
-      addNewTransaction({
-        customer_info,
-        product_info,
-        transactionType: buyOrSell,
-      })
-    );
+    // setCustomerDetails({
+    //   name: "",
+    //   phone: "",
+    //   address: "",
+    // });
 
-    setCustomerDetails({
-      name: "",
-      phone: "",
-      address: "",
-    });
-
-    setProductDetails({
-      name: "",
-      count: "",
-      price: "",
-    });
+    // setProductDetails({
+    //   name: "",
+    //   itemCount: "",
+    //   price: "",
+    // });
   };
 
   return (
@@ -164,12 +178,12 @@ const TransactionPage = () => {
               <FormInput
                 holderName={"No. of Items"}
                 inputType={"number"}
-                inputValue={productDetails.count}
+                inputValue={productDetails.itemCount}
                 onInputChange={(e) =>
                   setProductDetails((prevState) => {
                     return {
                       ...prevState,
-                      count: e.target.value,
+                      itemCount: e.target.value,
                     };
                   })
                 }
