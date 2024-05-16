@@ -3,15 +3,17 @@ const User = require("../model/User");
 const { hashedPassword } = require("../utils/hashmac_pwd");
 
 const getUser = async (req, res) => {
-  const { username, email } = req.body;
+  console.log(req.body);
+  const { username, emailId } = req.body;
 
-  if (!username || !email) {
+  if (!username || !emailId) {
     return res.sendStatus(406);
   }
 
   try {
     const foundUser = await User.findOne({
-      user_details: { username, email },
+      "user_details.username": username,
+      "user_details.emailId": emailId,
     })
       .lean()
       .exec();
@@ -20,7 +22,7 @@ const getUser = async (req, res) => {
       return res.sendStatus(404);
     }
 
-    res.status(404).json(foundUser);
+    res.status(200).json(foundUser);
   } catch (error) {
     res.sendStatus(500);
   }
@@ -45,17 +47,13 @@ const createUser = async (req, res) => {
       return res.sendStatus(409);
     }
 
-    const newPwd = await hashedPassword(
-      "sha256",
-      process.env.PWD_SALT,
-      password
-    );
+    const hashPwd = hashedPassword("sha256", process.env.PWD_SALT, password);
 
     const newUser = await User.create({
       user_details: {
         username,
         emailId,
-        password: newPwd,
+        password: hashPwd,
       },
       shop_details: {
         shopname,
@@ -69,26 +67,32 @@ const createUser = async (req, res) => {
 
     res.status(200).json(newUser);
   } catch (error) {
-    console.log(error);
     res.sendStatus(500);
   }
 };
 
 const updateUser = async (req, res) => {
-  console.log(req);
-  const { id, username, emailId, shopname, address } = req.body;
+  const { id, username, emailId, shopname, address, password } = req.body;
 
-  if (!id) {
+  if (!id || !password) {
     return res.sendStatus(406);
   }
 
-  try {
-    const updatedDoc = {};
+  const updatedDoc = {};
 
-    if (username) updatedDoc["user_details.username"] = username;
-    if (emailId) updatedDoc["user_details.email"] = emailId;
-    if (shopname) updatedDoc["shop_details.shopname"] = shopname;
-    if (address) updatedDoc["shop_details.address"] = address;
+  if (username) updatedDoc["user_details.username"] = username;
+  if (emailId) updatedDoc["user_details.email"] = emailId;
+  if (shopname) updatedDoc["shop_details.shopname"] = shopname;
+  if (address) updatedDoc["shop_details.address"] = address;
+
+  try {
+    const hashPwd = hashedPassword("sha256", process.env.PWD_SALT, password);
+
+    const findUser = await User.findById(id).lean().exec();
+
+    if (findUser.user_details.password !== hashPwd) {
+      return res.sendStatus(401);
+    }
 
     const updatedUser = await User.findByIdAndUpdate(
       id,
@@ -96,26 +100,36 @@ const updateUser = async (req, res) => {
       {
         new: true,
       }
-    ).exec();
+    )
+      .lean()
+      .exec();
 
     if (!updatedUser) {
       return res.sendStatus(404);
     }
 
-    res.status(200).json(updatedUser);
+    return res.status(200).json(updatedUser);
   } catch (error) {
     res.sendStatus(500);
   }
 };
 
 const deleteUser = async (req, res) => {
-  const { id } = req.body;
+  const { id, password } = req.body;
 
-  if (!id) {
+  if (!id || !password) {
     return res.sendStatus(406);
   }
 
   try {
+    const hashPwd = hashedPassword("sha256", process.env.PWD_SALT, password);
+
+    const findUser = await User.findById(id).lean().exec();
+
+    if (findUser.user_details.password === hashPwd) {
+      return res.sendStatus(401);
+    }
+
     const deletedUser = await User.findByIdAndDelete(id).lean().exec();
 
     if (!deletedUser) {
