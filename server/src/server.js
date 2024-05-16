@@ -14,8 +14,7 @@ const port = process.env.PORT || 3000;
 // initiate database connection
 connectDB();
 
-// parse json and form requests
-app.use(express.urlencoded({ extended: true }));
+// parse json requests
 app.use(express.json());
 
 app.use(cookieParser());
