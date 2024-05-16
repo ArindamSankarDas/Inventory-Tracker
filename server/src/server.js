@@ -22,8 +22,7 @@ app.use(cookieParser());
 // request routes
 app.use("/api/inventory", require("./routes/productRoute"));
 app.use("/api/transactions", require("./routes/transactionRoute"));
-app.use("/api/user", require("./routes/userRoute"));
-app.use("/api/auth", require("./routes/authRoute"));
+app.use("/api/users", require("./routes/userRoute"));
 
 // establishing database connection
 mongoose.connection.once("open", () => {
