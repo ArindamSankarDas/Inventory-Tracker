@@ -1,9 +1,10 @@
 import PropTypes from "prop-types";
-
 import { useEffect, useRef, useState } from "react";
-import FormInput from "../FormInput/FormInput";
 import { useDispatch } from "react-redux";
+
 import { addNewProduct } from "../../features/products/productSlice";
+
+import FormInput from "../FormInput/FormInput";
 
 const AddProduct = ({ newProduct, setNewItem }) => {
   const dispatch = useDispatch();

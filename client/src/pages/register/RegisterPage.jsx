@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import FormInput from "../../components/FormInput/FormInput";
+import { useDispatch } from "react-redux";
+
 import { addUser } from "../../features/users/userSlice";
+
+import FormInput from "../../components/FormInput/FormInput";
 
 const RegisterPage = () => {
   const [registerState, setRegisterState] = useState({

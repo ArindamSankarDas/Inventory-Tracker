@@ -1,4 +1,8 @@
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
 import { Routes, Route, useNavigate } from "react-router-dom";
+
+import { selectUser, selectUserStatus } from "./features/users/userSlice";
 
 import Layout from "./components/Layout/Layout";
 import UserLayout from "./components/Layout/UserLayout";
@@ -16,9 +20,6 @@ import ProfilePage from "./pages/profile/ProfilePage";
 import ErrorBoundaryElement from "./components/Error/ErrorBoundaryElement";
 
 import "./App.css";
-import { useEffect } from "react";
-import { selectUser, selectUserStatus } from "./features/users/userSlice";
-import { useSelector } from "react-redux";
 
 const App = () => {
   const currentUser = useSelector(selectUser);

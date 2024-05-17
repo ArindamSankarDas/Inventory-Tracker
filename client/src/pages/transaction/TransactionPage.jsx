@@ -1,12 +1,14 @@
 import { useState } from "react";
-import SubHeader from "../../components/SubHeader/SubHeader";
-import FormInput from "../../components/FormInput/FormInput";
 import { useDispatch } from "react-redux";
-import { addNewTransaction } from "../../features/transactions/transactionSlice";
+
 import {
   addNewProduct,
   sellProducts,
 } from "../../features/products/productSlice";
+import { addNewTransaction } from "../../features/transactions/transactionSlice";
+
+import SubHeader from "../../components/SubHeader/SubHeader";
+import FormInput from "../../components/FormInput/FormInput";
 
 const TransactionPage = () => {
   const [isActive, setIsActive] = useState(true);

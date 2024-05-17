@@ -1,11 +1,13 @@
-import { Pencil, Trash2 } from "lucide-react";
 import PropTypes from "prop-types";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
 import {
   deleteProduct,
   updateProduct,
 } from "../../features/products/productSlice";
-import { useDispatch } from "react-redux";
-import { useState } from "react";
+
+import { Pencil, Trash2 } from "lucide-react";
+
 import FormInput from "../FormInput/FormInput";
 
 const ProductItem = ({ productDetails }) => {

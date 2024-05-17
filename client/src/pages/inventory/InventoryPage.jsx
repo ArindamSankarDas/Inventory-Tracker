@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
-
-import SubHeader from "../../components/SubHeader/SubHeader";
-import ItemsTable from "../../components/ItemsTable/ItemsTable";
 import { useDispatch, useSelector } from "react-redux";
+
 import {
   fetchProducts,
   selectAllProducts,
@@ -10,6 +8,9 @@ import {
   selectStateError,
   selectStateStatus,
 } from "../../features/products/productSlice";
+
+import SubHeader from "../../components/SubHeader/SubHeader";
+import ItemsTable from "../../components/ItemsTable/ItemsTable";
 import AddProduct from "../../components/AddProduct/AddProduct";
 
 const InventoryPage = () => {

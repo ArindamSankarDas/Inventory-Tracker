@@ -1,6 +1,8 @@
 import { useSelector } from "react-redux";
-import Logo from "../../assets/mobile/logo-mobl.svg";
+
 import { selectUser } from "../../features/users/userSlice";
+
+import Logo from "../../assets/mobile/logo-mobl.svg";
 
 const ProfilePage = () => {
   const currentUser = useSelector(selectUser);
@@ -16,7 +18,9 @@ const ProfilePage = () => {
           height={"100%"}
         />
         <div className='text-center space-y-3 lg:text-left'>
-          <h2 className='text-4xl font-bold'>{currentUser.user_details.username}</h2>
+          <h2 className='text-4xl font-bold'>
+            {currentUser.user_details.username}
+          </h2>
           <h3 className='text-2xl'>{currentUser.user_details.emailId}</h3>
           <button className='border-[4px] rounded-[3px] px-2 py-1 border-tertiary text-tertiary font-bold hover:bg-tertiary hover:text-white transition-all'>
             LOG OUT
