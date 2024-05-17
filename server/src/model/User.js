@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema({
     shopname: String,
     address: String,
   },
+  isActive: { type: Boolean, default: true },
 });
 
 module.exports = mongoose.model("user", userSchema);
