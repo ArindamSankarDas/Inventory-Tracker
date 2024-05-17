@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 
 import Layout from "./components/Layout/Layout";
 import UserLayout from "./components/Layout/UserLayout";
@@ -16,23 +16,51 @@ import ProfilePage from "./pages/profile/ProfilePage";
 import ErrorBoundaryElement from "./components/Error/ErrorBoundaryElement";
 
 import "./App.css";
+import { useEffect } from "react";
+import { selectUser, selectUserStatus } from "./features/users/userSlice";
+import { useSelector } from "react-redux";
 
 const App = () => {
+  const currentUser = useSelector(selectUser);
+  const currentUserStatus = useSelector(selectUserStatus);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (
+      currentUserStatus === "succeeded" &&
+      currentUser !== null &&
+      currentUser.isActive !== false
+    ) {
+      navigate("/home/");
+    } else {
+      navigate("/");
+    }
+  }, [currentUser, navigate, currentUserStatus]);
+
+  if (currentUserStatus === "loading") {
+    return (
+      <div className='h-screen relative bg-cyan-100'>
+        <span className='loader absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'></span>
+      </div>
+    );
+  }
+
   return (
     <Routes>
-      <Route path="/" element={<Layout />}>
+      <Route path='/' element={<Layout />}>
         <Route index element={<HomePage />} />
-        <Route path="login" element={<LoginPage />} />
-        <Route path="register" element={<RegisterPage />} />
-        <Route path="home" element={<UserLayout />}>
+        <Route path='login' element={<LoginPage />} />
+        <Route path='register' element={<RegisterPage />} />
+        <Route path='home' element={<UserLayout />}>
           <Route index element={<UserHomePage />} />
-          <Route path="inventory" element={<InventoryPage />} />
-          <Route path="transactions" element={<TransactionPage />} />
-          <Route path="history" element={<HistoryPage />} />
-          <Route path="profile" element={<ProfilePage />} />
+          <Route path='inventory' element={<InventoryPage />} />
+          <Route path='transactions' element={<TransactionPage />} />
+          <Route path='history' element={<HistoryPage />} />
+          <Route path='profile' element={<ProfilePage />} />
         </Route>
       </Route>
-      <Route path="*" element={<ErrorBoundaryElement />} />
+      <Route path='*' element={<ErrorBoundaryElement />} />
     </Routes>
   );
 };
