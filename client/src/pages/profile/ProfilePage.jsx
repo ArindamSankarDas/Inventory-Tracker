@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 
-import { selectUser } from "../../features/users/userSlice";
+import { selectUser } from "../../features/auth/authSlice";
 
 import Logo from "../../assets/mobile/logo-mobl.svg";
 

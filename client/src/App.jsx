@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Routes, Route, useNavigate } from "react-router-dom";
 
-import { selectUser, selectUserStatus } from "./features/users/userSlice";
+import { selectUser, selectUserStatus } from "./features/auth/authSlice";
 
 import Layout from "./components/Layout/Layout";
 import UserLayout from "./components/Layout/UserLayout";
