@@ -4,7 +4,7 @@ import {
   createAsyncThunk,
 } from "@reduxjs/toolkit";
 
-import axios from "axios";
+import axios from "../../app/api/axios";
 
 const transactionAdapter = createEntityAdapter({});
 

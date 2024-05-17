@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-import axios from "axios";
+import { axiosPrivate } from "../../app/api/axios";
 
 const initialState = {
   currentUser: null,
@@ -9,11 +9,14 @@ const initialState = {
   error: null,
 };
 
-export const registerUser = createAsyncThunk("users/registerUser", async (data) => {
-  const response = await axios.post("/api/users", data);
+export const registerUser = createAsyncThunk(
+  "users/registerUser",
+  async (data) => {
+    const response = await axiosPrivate.post("/api/users", data);
 
-  return response.data;
-});
+    return response.data;
+  }
+);
 
 const userSlice = createSlice({
   name: "user",
