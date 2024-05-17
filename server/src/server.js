@@ -3,6 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
+const cors = require("cors");
 
 // monodb config
 const connectDB = require("./config/db");
@@ -11,12 +12,20 @@ const connectDB = require("./config/db");
 const app = express();
 const port = process.env.PORT || 3000;
 
+// server config
+const corsOptions = require("./config/corsOptions");
+const credentials = require("./middleware/credentials");
+
 // initiate database connection
 connectDB();
 
+// check if the credentials can be passed
+app.use(credentials);
+// to check if the request of origin in allowed
+app.use(cors(corsOptions));
 // parse json requests
 app.use(express.json());
-
+// parse http cookies
 app.use(cookieParser());
 
 // request routes
