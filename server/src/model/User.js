@@ -6,12 +6,10 @@ const userSchema = new mongoose.Schema({
     emailId: String,
     password: String,
   },
-  roles: [
-    {
-      type: String,
-      default: "User",
-    },
-  ],
+  roles: {
+    type: [String],
+    default: ["User"],
+  },
   shop_details: {
     shopname: String,
     address: String,
