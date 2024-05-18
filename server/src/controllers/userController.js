@@ -28,49 +28,6 @@ const getUser = async (req, res) => {
   }
 };
 
-const createUser = async (req, res) => {
-  const { username, emailId, password, shopname, address } = req.body;
-
-  if (!username || !emailId || !password || !shopname || !address) {
-    return res.sendStatus(406);
-  }
-
-  try {
-    const duplicate = await User.findOne({
-      "user_details.username": username,
-      "user_details.emailId": emailId,
-    })
-      .lean()
-      .exec();
-
-    if (duplicate) {
-      return res.sendStatus(409);
-    }
-
-    const hashPwd = hashedPassword("sha256", process.env.PWD_SALT, password);
-
-    const newUser = await User.create({
-      user_details: {
-        username,
-        emailId,
-        password: hashPwd,
-      },
-      shop_details: {
-        shopname,
-        address,
-      },
-    });
-
-    if (!newUser) {
-      return res.sendStatus(400);
-    }
-
-    res.status(200).json(newUser);
-  } catch (error) {
-    res.sendStatus(500);
-  }
-};
-
 const updateUser = async (req, res) => {
   const { id, username, emailId, shopname, address, password } = req.body;
 
@@ -144,7 +101,6 @@ const deleteUser = async (req, res) => {
 
 module.exports = {
   getUser,
-  createUser,
   updateUser,
   deleteUser,
 };

@@ -3,10 +3,13 @@ const router = express.Router();
 
 const userController = require("../controllers/userController");
 
+const verifyJWT = require("../middleware/verifyJwt");
+
+router.use(verifyJWT);
+
 router
   .route("/")
   .get(userController.getUser)
-  .post(userController.createUser)
   .patch(userController.updateUser)
   .delete(userController.deleteUser);
 

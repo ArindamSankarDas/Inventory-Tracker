@@ -6,11 +6,16 @@ const userSchema = new mongoose.Schema({
     emailId: String,
     password: String,
   },
+  roles: [
+    {
+      type: String,
+      default: "User",
+    },
+  ],
   shop_details: {
     shopname: String,
     address: String,
   },
-  isActive: { type: Boolean, default: true },
 });
 
 module.exports = mongoose.model("user", userSchema);
