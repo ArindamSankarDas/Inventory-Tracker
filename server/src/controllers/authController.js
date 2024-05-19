@@ -84,24 +84,24 @@ const handleLogin = async (req, res) => {
       },
       process.env.ACCESS_TOKEN_SECRET,
       {
-        expiresIn: "1m",
+        expiresIn: "15m",
       }
     );
 
     const refreshToken = jwt.sign(
       { emailId: foundUser.user_details.emailId },
       process.env.REFRESH_TOKEN_SECRET,
-      { expiresIn: "3m" }
+      { expiresIn: "7d" }
     );
 
     res.cookie("jwt", refreshToken, {
       httpOnlly: true,
       sameSite: "none",
-      // secure: true,
+      secure: true,
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    res.status(200).json({ accessToken });
+    res.status(200).json({ userDetails: foundUser, accessToken });
   } catch (error) {
     res.sendStatus(500);
   }
@@ -141,7 +141,7 @@ const handleRefresh = async (req, res) => {
         },
         process.env.ACCESS_TOKEN_SECRET,
         {
-          expiresIn: "1m",
+          expiresIn: "15m",
         }
       );
 
@@ -160,7 +160,7 @@ const handleLogout = async (req, res) => {
   res.clearCookie("jwt", {
     httpOnlly: true,
     sameSite: "none",
-    // secure: true,
+    secure: true,
   });
 
   res.sendStatus(200);
