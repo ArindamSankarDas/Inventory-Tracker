@@ -8,6 +8,7 @@ import {
   selectStateError,
   selectStateStatus,
 } from "../../features/products/productSlice";
+import { selectAuthToken } from "../../features/auth/authSlice";
 
 import SubHeader from "../../components/SubHeader/SubHeader";
 import ItemsTable from "../../components/ItemsTable/ItemsTable";
@@ -23,12 +24,13 @@ const InventoryPage = () => {
   const seasonalProducts = useSelector(selectSeasonalProducts);
   const productStatus = useSelector(selectStateStatus);
   const productError = useSelector(selectStateError);
+  const currentUserToken = useSelector(selectAuthToken);
 
   useEffect(() => {
     if (productStatus === "idle") {
-      dispatch(fetchProducts());
+      dispatch(fetchProducts(currentUserToken));
     }
-  }, [dispatch, productStatus]);
+  }, [dispatch, productStatus, currentUserToken]);
 
   return (
     <section className='relative flex-1 lg:px-[15rem] lg:py-10'>

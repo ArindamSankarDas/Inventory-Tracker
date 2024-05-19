@@ -1,14 +1,37 @@
+import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+
+import { authLogin } from "../../features/auth/authSlice";
 
 import mobileLoginImg from "../../assets/mobile/mobile_illus_login.svg";
 
 import FormInput from "../../components/FormInput/FormInput";
 
-const handleSubmit = (e) => {
-  e.preventDefault();
-};
-
 const LoginPage = () => {
+  const [loginState, setLoginState] = useState({
+    emailId: "",
+    password: "",
+  });
+
+  const dispatch = useDispatch();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const { emailId, password } = loginState;
+
+    if (!emailId || !password) {
+      alert("no field can be empty");
+      return;
+    }
+
+    dispatch(authLogin(loginState));
+    setLoginState({
+      emailId: "",
+      password: "",
+    });
+  };
   return (
     <section
       className='my-2 flex flex-col justify-center items-center gap-y-6 flex-1 lg:flex-row lg:gap-x-[6rem]'
@@ -30,11 +53,33 @@ const LoginPage = () => {
       >
         <h1 className='text-4xl font-semibold hidden lg:block'>Login</h1>
 
-        <FormInput holderName='Email ID' inputType='text' inputName='email' />
+        <FormInput
+          holderName='Email ID'
+          inputType='email'
+          inputName='email'
+          inputValue={loginState.emailId}
+          onInputChange={(e) =>
+            setLoginState((prevState) => {
+              return {
+                ...prevState,
+                emailId: e.target.value,
+              };
+            })
+          }
+        />
         <FormInput
           holderName='Password'
           inputType='password'
           inputName='password'
+          inputValue={loginState.password}
+          onInputChange={(e) =>
+            setLoginState((prevState) => {
+              return {
+                ...prevState,
+                password: e.target.value,
+              };
+            })
+          }
         />
         <button className='relative left-1/2 -translate-x-1/2 bg-blue-600 text-white px-6 py-2 text-xl rounded-md font-medium lg:w-1/2'>
           Login

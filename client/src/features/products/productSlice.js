@@ -5,7 +5,7 @@ import {
   createAsyncThunk,
 } from "@reduxjs/toolkit";
 
-import axios from "../../app/api/axios";
+import { axiosPrivate } from "../../app/api/axios";
 
 const productAdapter = createEntityAdapter({});
 
@@ -16,8 +16,8 @@ const initialState = productAdapter.getInitialState({
 
 export const fetchProducts = createAsyncThunk(
   "products/fetchProducts",
-  async () => {
-    const response = await axios.get("/api/inventory");
+  async (token) => {
+    const response = await axiosPrivate(token).get("/api/inventory");
 
     return response.data;
   }
@@ -25,8 +25,8 @@ export const fetchProducts = createAsyncThunk(
 
 export const addNewProduct = createAsyncThunk(
   "products/addProducts",
-  async (data) => {
-    const response = await axios.post("/api/inventory", {
+  async ({ token, data }) => {
+    const response = await axiosPrivate(token).post("/api/inventory", {
       ...data,
       name: data.name.trim().toLowerCase(),
       price: Number(data.price),
@@ -40,8 +40,8 @@ export const addNewProduct = createAsyncThunk(
 
 export const sellProducts = createAsyncThunk(
   "products/sellProducts",
-  async (data) => {
-    const response = await axios.patch("/api/inventory", {
+  async ({ token, data }) => {
+    const response = await axiosPrivate(token).patch("/api/inventory", {
       ...data,
       name: data.name.trim().toLowerCase(),
       price: Number(data.price),
@@ -55,8 +55,8 @@ export const sellProducts = createAsyncThunk(
 
 export const deleteProduct = createAsyncThunk(
   "products/deleteProduct",
-  async (productId) => {
-    const response = await axios.delete(`/api/inventory`, {
+  async ({ token, productId }) => {
+    const response = await axiosPrivate(token).delete(`/api/inventory`, {
       data: {
         id: productId,
       },
@@ -68,8 +68,8 @@ export const deleteProduct = createAsyncThunk(
 
 export const updateProduct = createAsyncThunk(
   "products/updateProduct",
-  async (updatedData) => {
-    const response = await axios.put("/api/inventory", {
+  async ({ token, updatedData }) => {
+    const response = await axiosPrivate(token).put("/api/inventory", {
       ...updatedData,
       name: updatedData.name.trim().toLowerCase(),
     });
@@ -81,8 +81,6 @@ export const updateProduct = createAsyncThunk(
 const productSlice = createSlice({
   name: "products",
   initialState,
-  reducers: {},
-
   extraReducers: (builder) => {
     builder
       .addCase(fetchProducts.pending, (state) => {

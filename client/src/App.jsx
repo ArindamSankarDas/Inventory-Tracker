@@ -2,7 +2,11 @@ import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Routes, Route, useNavigate } from "react-router-dom";
 
-import { selectUser, selectUserStatus } from "./features/auth/authSlice";
+import {
+  selectUser,
+  selectAuthStatus,
+  selectAuthToken,
+} from "./features/auth/authSlice";
 
 import Layout from "./components/Layout/Layout";
 import UserLayout from "./components/Layout/UserLayout";
@@ -23,23 +27,20 @@ import "./App.css";
 
 const App = () => {
   const currentUser = useSelector(selectUser);
-  const currentUserStatus = useSelector(selectUserStatus);
+  const currentAuthStatus = useSelector(selectAuthStatus);
+  const currentAuthToken = useSelector(selectAuthToken);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (
-      currentUserStatus === "succeeded" &&
-      currentUser !== null &&
-      currentUser.isActive !== false
-    ) {
+    if (currentAuthStatus === "succeeded" && currentUser && currentAuthToken) {
       navigate("/home/");
     } else {
       navigate("/");
     }
-  }, [currentUser, navigate, currentUserStatus]);
+  }, [currentUser, navigate, currentAuthStatus, currentAuthToken]);
 
-  if (currentUserStatus === "loading") {
+  if (currentAuthStatus === "loading") {
     return (
       <div className='h-screen relative bg-cyan-100'>
         <span className='loader absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'></span>

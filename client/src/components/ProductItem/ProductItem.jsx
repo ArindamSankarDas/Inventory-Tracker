@@ -1,10 +1,12 @@
 import PropTypes from "prop-types";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+
 import {
   deleteProduct,
   updateProduct,
 } from "../../features/products/productSlice";
+import { selectAuthToken } from "../../features/auth/authSlice";
 
 import { Pencil, Trash2 } from "lucide-react";
 
@@ -12,6 +14,7 @@ import FormInput from "../FormInput/FormInput";
 
 const ProductItem = ({ productDetails }) => {
   const dispatch = useDispatch();
+  const currentUserToken = useSelector(selectAuthToken);
 
   const [toEdit, setToEdit] = useState(false);
 
@@ -41,7 +44,12 @@ const ProductItem = ({ productDetails }) => {
       return;
     }
 
-    dispatch(updateProduct({ id: productDetails.id, ...itemState }));
+    dispatch(
+      updateProduct({
+        token: currentUserToken,
+        updatedData: { id: productDetails.id, ...itemState },
+      })
+    );
     setToEdit(false);
   };
 
@@ -65,7 +73,14 @@ const ProductItem = ({ productDetails }) => {
           </div>
           <div
             className='bg-black px-2 py-2 rounded-full cursor-pointer inventory_hover_effect '
-            onClick={() => dispatch(deleteProduct(productDetails.id))}
+            onClick={() =>
+              dispatch(
+                deleteProduct({
+                  token: currentUserToken,
+                  productId: productDetails.id,
+                })
+              )
+            }
           >
             <Trash2 color='black' size={"13px"} />
           </div>

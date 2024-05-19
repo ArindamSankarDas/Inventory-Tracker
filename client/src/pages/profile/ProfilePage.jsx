@@ -1,11 +1,25 @@
-import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
-import { selectUser } from "../../features/auth/authSlice";
+import { authLogout, selectUser } from "../../features/auth/authSlice";
 
 import Logo from "../../assets/mobile/logo-mobl.svg";
 
 const ProfilePage = () => {
   const currentUser = useSelector(selectUser);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    dispatch(authLogout());
+    navigate("/");
+  };
+
+  // remove it after implementing pesistance
+  if (!currentUser) {
+    navigate("/");
+  }
 
   return (
     <section className='min-h-full flex-1 px-6 py-6 bg-secondary'>
@@ -22,7 +36,10 @@ const ProfilePage = () => {
             {currentUser.user_details.username}
           </h2>
           <h3 className='text-2xl'>{currentUser.user_details.emailId}</h3>
-          <button className='border-[4px] rounded-[3px] px-2 py-1 border-tertiary text-tertiary font-bold hover:bg-tertiary hover:text-white transition-all'>
+          <button
+            className='border-[4px] rounded-[3px] px-2 py-1 border-tertiary text-tertiary font-bold hover:bg-tertiary hover:text-white transition-all'
+            onClick={handleClick}
+          >
             LOG OUT
           </button>
         </div>

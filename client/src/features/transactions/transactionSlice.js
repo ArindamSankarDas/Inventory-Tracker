@@ -4,7 +4,7 @@ import {
   createAsyncThunk,
 } from "@reduxjs/toolkit";
 
-import axios from "../../app/api/axios";
+import { axiosPrivate } from "../../app/api/axios";
 
 const transactionAdapter = createEntityAdapter({});
 
@@ -15,16 +15,19 @@ const initialState = transactionAdapter.getInitialState({
 
 export const fetchTransactions = createAsyncThunk(
   "transactions/fetchTransactions",
-  async () => {
-    const response = await axios.get("/api/transactions");
+  async (token) => {
+    const response = await axiosPrivate(token).get("/api/transactions");
     return response.data;
   }
 );
 
 export const addNewTransaction = createAsyncThunk(
   "transactions/addTransaction",
-  async (transactionData) => {
-    const response = await axios.post("/api/transactions", transactionData);
+  async ({ token, transactionData }) => {
+    const response = await axiosPrivate(token).post(
+      "/api/transactions",
+      transactionData
+    );
 
     return response.data;
   }
@@ -33,7 +36,6 @@ export const addNewTransaction = createAsyncThunk(
 const transactionReducer = createSlice({
   name: "transactions",
   initialState,
-  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchTransactions.pending, (state) => {

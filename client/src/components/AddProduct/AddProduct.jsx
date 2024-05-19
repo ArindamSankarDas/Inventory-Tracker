@@ -1,7 +1,8 @@
 import PropTypes from "prop-types";
 import { useEffect, useRef, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
+import { selectAuthToken } from "../../features/auth/authSlice";
 import { addNewProduct } from "../../features/products/productSlice";
 
 import FormInput from "../FormInput/FormInput";
@@ -9,6 +10,8 @@ import FormInput from "../FormInput/FormInput";
 const AddProduct = ({ newProduct, setNewItem }) => {
   const dispatch = useDispatch();
   const formRef = useRef(null);
+
+  const currentUserToken = useSelector(selectAuthToken);
 
   const [formState, setFormState] = useState({
     name: "",
@@ -41,7 +44,7 @@ const AddProduct = ({ newProduct, setNewItem }) => {
       return;
     }
 
-    dispatch(addNewProduct(formState));
+    dispatch(addNewProduct({ token: currentUserToken, data: formState }));
     setFormState({
       name: "",
       itemCount: "",
@@ -49,6 +52,7 @@ const AddProduct = ({ newProduct, setNewItem }) => {
       isSeasonal: false,
     });
   };
+
   return (
     <>
       {newProduct ? (

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
-import { registerUser } from "../../features/auth/authSlice";
+import { authRegister } from "../../features/auth/authSlice";
 
 import FormInput from "../../components/FormInput/FormInput";
 
@@ -41,7 +41,15 @@ const RegisterPage = () => {
       return;
     }
 
-    dispatch(registerUser(registerFormState));
+    dispatch(authRegister(registerFormState));
+    setRegisterState({
+      username: "",
+      emailId: "",
+      password: "",
+      confirmPassword: "",
+      shopname: "",
+      address: "",
+    });
   };
 
   return (
