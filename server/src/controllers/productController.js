@@ -111,7 +111,7 @@ const decreaseProductCount = async (req, res) => {
     if (
       price === existingProduct?.price &&
       isSeasonal === existingProduct?.isSeasonal &&
-      existingProduct?.itemCount - itemCount !== 0
+      existingProduct?.itemCount - itemCount >= 0
     ) {
       await existingProduct
         .updateOne({ itemCount: existingProduct.itemCount - itemCount })

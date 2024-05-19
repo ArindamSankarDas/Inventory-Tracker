@@ -99,6 +99,7 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(authRefresh.fulfilled, (state, action) => {
+        state.status = "idle";
         state.token = action.payload.accessToken;
       })
       .addCase(authRefresh.rejected, (state, action) => {

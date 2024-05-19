@@ -7,7 +7,6 @@ import {
   selectTransactionError,
   selectTransactionStatus,
 } from "../../features/transactions/transactionSlice";
-import { selectAuthToken } from "../../features/auth/authSlice";
 
 import HistoryItemsTable from "../../components/HistoryItemsTable/HistoryItemsTable";
 
@@ -15,15 +14,14 @@ const HistoryPage = () => {
   const transactionHistory = useSelector(selectAllTransactions);
   const transactionStatus = useSelector(selectTransactionStatus);
   const transactionError = useSelector(selectTransactionError);
-  const currentUserToken = useSelector(selectAuthToken);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (transactionStatus === "idle") {
-      dispatch(fetchTransactions(currentUserToken));
+      dispatch(fetchTransactions());
     }
-  }, [dispatch, transactionStatus, currentUserToken]);
+  }, [dispatch, transactionStatus]);
 
   return (
     <section className='flex-1 min-h-full lg:px-20'>

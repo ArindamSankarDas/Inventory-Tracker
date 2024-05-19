@@ -6,6 +6,7 @@ import {
 } from "@reduxjs/toolkit";
 
 import { axiosPrivate } from "../../app/api/axios";
+import { authRefresh } from "../auth/authSlice";
 
 const productAdapter = createEntityAdapter({});
 
@@ -16,65 +17,176 @@ const initialState = productAdapter.getInitialState({
 
 export const fetchProducts = createAsyncThunk(
   "products/fetchProducts",
-  async (token) => {
-    const response = await axiosPrivate(token).get("/api/inventory");
+  async (_, thunkAPI) => {
+    let state = thunkAPI.getState();
+    let token = state.auth.token;
 
-    return response.data;
+    try {
+      const response = await axiosPrivate(token).get("/api/inventory");
+      return response.data;
+    } catch (error) {
+      if (error.response && error.response.status === 403) {
+        await thunkAPI.dispatch(authRefresh());
+
+        state = thunkAPI.getState();
+        token = state.auth.token;
+
+        const retryResponse = await axiosPrivate(token).get("/api/inventory");
+        return retryResponse.data;
+      } else {
+        throw error;
+      }
+    }
   }
 );
 
 export const addNewProduct = createAsyncThunk(
   "products/addProducts",
-  async ({ token, data }) => {
-    const response = await axiosPrivate(token).post("/api/inventory", {
-      ...data,
-      name: data.name.trim().toLowerCase(),
-      price: Number(data.price),
-      itemCount: Number(data.itemCount),
-      isSeasonal: Boolean(data.isSeasonal),
-    });
+  async (data, thunkAPI) => {
+    let state = thunkAPI.getState();
+    let token = state.auth.token;
 
-    return response.data;
+    try {
+      const response = await axiosPrivate(token).post("/api/inventory", {
+        ...data,
+        name: data.name.trim().toLowerCase(),
+        price: Number(data.price),
+        itemCount: Number(data.itemCount),
+        isSeasonal: Boolean(data.isSeasonal),
+      });
+
+      return response.data;
+    } catch (error) {
+      if (error.response && error.response.status === 403) {
+        await thunkAPI.dispatch(authRefresh());
+
+        state = thunkAPI.getState();
+        token = state.auth.token;
+
+        const retryResponse = await axiosPrivate(token).post("/api/inventory", {
+          ...data,
+          name: data.name.trim().toLowerCase(),
+          price: Number(data.price),
+          itemCount: Number(data.itemCount),
+          isSeasonal: Boolean(data.isSeasonal),
+        });
+        return retryResponse.data;
+      } else {
+        throw error;
+      }
+    }
   }
 );
 
 export const sellProducts = createAsyncThunk(
   "products/sellProducts",
-  async ({ token, data }) => {
-    const response = await axiosPrivate(token).patch("/api/inventory", {
-      ...data,
-      name: data.name.trim().toLowerCase(),
-      price: Number(data.price),
-      itemCount: Number(data.itemCount),
-      isSeasonal: Boolean(data.isSeasonal),
-    });
+  async (data, thunkAPI) => {
+    let state = thunkAPI.getState();
+    let token = state.auth.token;
 
-    return response.data;
+    try {
+      const response = await axiosPrivate(token).patch("/api/inventory", {
+        ...data,
+        name: data.name.trim().toLowerCase(),
+        price: Number(data.price),
+        itemCount: Number(data.itemCount),
+        isSeasonal: Boolean(data.isSeasonal),
+      });
+
+      return response.data;
+    } catch (error) {
+      if (error.response && error.response.status === 403) {
+        await thunkAPI.dispatch(authRefresh());
+
+        state = thunkAPI.getState();
+        token = state.auth.token;
+
+        const retryResponse = await axiosPrivate(token).patch(
+          "/api/inventory",
+          {
+            ...data,
+            name: data.name.trim().toLowerCase(),
+            price: Number(data.price),
+            itemCount: Number(data.itemCount),
+            isSeasonal: Boolean(data.isSeasonal),
+          }
+        );
+
+        return retryResponse.data;
+      } else {
+        throw error;
+      }
+    }
   }
 );
 
 export const deleteProduct = createAsyncThunk(
   "products/deleteProduct",
-  async ({ token, productId }) => {
-    const response = await axiosPrivate(token).delete(`/api/inventory`, {
-      data: {
-        id: productId,
-      },
-    });
+  async (productId, thunkAPI) => {
+    let state = thunkAPI.getState();
+    let token = state.auth.token;
 
-    return response.data;
+    try {
+      const response = await axiosPrivate(token).delete(`/api/inventory`, {
+        data: {
+          id: productId,
+        },
+      });
+
+      return response.data;
+    } catch (error) {
+      if (error.response && error.response.status === 403) {
+        await thunkAPI.dispatch(authRefresh());
+
+        state = thunkAPI.getState();
+        token = state.auth.token;
+
+        const retryResponse = await axiosPrivate(token).delete(
+          "/api/inventory",
+          {
+            data: {
+              id: productId,
+            },
+          }
+        );
+        return retryResponse.data;
+      } else {
+        throw error;
+      }
+    }
   }
 );
 
 export const updateProduct = createAsyncThunk(
   "products/updateProduct",
-  async ({ token, updatedData }) => {
-    const response = await axiosPrivate(token).put("/api/inventory", {
-      ...updatedData,
-      name: updatedData.name.trim().toLowerCase(),
-    });
+  async (updatedData, thunkAPI) => {
+    let state = thunkAPI.getState();
+    let token = state.auth.token;
 
-    return response.data;
+    try {
+      const response = await axiosPrivate(token).put("/api/inventory", {
+        ...updatedData,
+        name: updatedData.name.trim().toLowerCase(),
+      });
+
+      return response.data;
+    } catch (error) {
+      if (error.response && error.response.status === 403) {
+        await thunkAPI.dispatch(authRefresh());
+
+        state = thunkAPI.getState();
+        token = state.auth.token;
+
+        const retryResponse = await axiosPrivate(token).put("/api/inventory", {
+          ...updatedData,
+          name: updatedData.name.trim().toLowerCase(),
+        });
+
+        return retryResponse.data;
+      } else {
+        throw error;
+      }
+    }
   }
 );
 
@@ -109,7 +221,6 @@ const productSlice = createSlice({
         state.error = action.error.message;
       })
       .addCase(addNewProduct.fulfilled, (state, action) => {
-        state.status = "idle";
         action.payload.id = action.payload._id;
         delete action.payload.__v;
         delete action.payload._id;
@@ -124,9 +235,9 @@ const productSlice = createSlice({
         }
 
         productAdapter.addOne(state, action.payload);
+        state.status = "idle";
       })
       .addCase(sellProducts.fulfilled, (state, action) => {
-        state.status = "idle";
         const { _id: id, itemCount } = action.payload;
 
         if (id in state.entities && itemCount !== 0) {
@@ -142,6 +253,7 @@ const productSlice = createSlice({
           productAdapter.removeOne(state, id);
           return;
         }
+        state.status = "idle";
       })
       .addCase(deleteProduct.fulfilled, (state, action) => {
         const { _id: id } = action.payload;
@@ -149,6 +261,7 @@ const productSlice = createSlice({
         productAdapter.removeOne(state, id);
       })
       .addCase(updateProduct.fulfilled, (state, action) => {
+        state.status = "idle";
         const { _id: id, name, price, itemCount } = action.payload;
 
         productAdapter.updateOne(state, {

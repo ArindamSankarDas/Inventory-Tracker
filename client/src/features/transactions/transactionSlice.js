@@ -5,6 +5,7 @@ import {
 } from "@reduxjs/toolkit";
 
 import { axiosPrivate } from "../../app/api/axios";
+import { authRefresh } from "../auth/authSlice";
 
 const transactionAdapter = createEntityAdapter({});
 
@@ -15,21 +16,60 @@ const initialState = transactionAdapter.getInitialState({
 
 export const fetchTransactions = createAsyncThunk(
   "transactions/fetchTransactions",
-  async (token) => {
-    const response = await axiosPrivate(token).get("/api/transactions");
-    return response.data;
+  async (_, thunkAPI) => {
+    let state = thunkAPI.getState();
+    let token = state.auth.token;
+
+    try {
+      const response = await axiosPrivate(token).get("/api/transactions");
+      return response.data;
+    } catch (error) {
+      if (error.response && error.response.status === 403) {
+        await thunkAPI.dispatch(authRefresh());
+        state = thunkAPI.getState();
+        token = state.auth.token;
+
+        const retryResponse = await axiosPrivate(token).get(
+          "/api/transactions"
+        );
+        return retryResponse.data;
+      } else {
+        throw error;
+      }
+    }
   }
 );
 
 export const addNewTransaction = createAsyncThunk(
   "transactions/addTransaction",
-  async ({ token, transactionData }) => {
-    const response = await axiosPrivate(token).post(
-      "/api/transactions",
-      transactionData
-    );
+  async (transactionData, thunkAPI) => {
+    let state = thunkAPI.getState();
+    let token = state.auth.token;
 
-    return response.data;
+    try {
+      const response = await axiosPrivate(token).post(
+        "/api/transactions",
+        transactionData
+      );
+
+      return response.data;
+    } catch (error) {
+      if (error.response && error.response.status === 403) {
+        await thunkAPI.dispatch(authRefresh());
+
+        state = thunkAPI.getState();
+        token = state.auth.token;
+
+        const retryResponse = await axiosPrivate(token).post(
+          "/api/transactions",
+          transactionData
+        );
+
+        return retryResponse.data;
+      } else {
+        throw error;
+      }
+    }
   }
 );
 

@@ -84,14 +84,14 @@ const handleLogin = async (req, res) => {
       },
       process.env.ACCESS_TOKEN_SECRET,
       {
-        expiresIn: "15m",
+        expiresIn: "10s",
       }
     );
 
     const refreshToken = jwt.sign(
       { emailId: foundUser.user_details.emailId },
       process.env.REFRESH_TOKEN_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "30m" }
     );
 
     res.cookie("jwt", refreshToken, {
@@ -141,7 +141,7 @@ const handleRefresh = async (req, res) => {
         },
         process.env.ACCESS_TOKEN_SECRET,
         {
-          expiresIn: "15m",
+          expiresIn: "10s",
         }
       );
 

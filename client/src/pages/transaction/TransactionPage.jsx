@@ -1,19 +1,16 @@
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 import {
   addNewProduct,
   sellProducts,
 } from "../../features/products/productSlice";
-import { selectAuthToken } from "../../features/auth/authSlice";
 import { addNewTransaction } from "../../features/transactions/transactionSlice";
 
 import SubHeader from "../../components/SubHeader/SubHeader";
 import FormInput from "../../components/FormInput/FormInput";
 
 const TransactionPage = () => {
-  const currentUserToken = useSelector(selectAuthToken);
-
   const [isActive, setIsActive] = useState(true);
   const [customerDetails, setCustomerDetails] = useState({
     name: "",
@@ -53,20 +50,18 @@ const TransactionPage = () => {
     if (isActive) {
       buyOrSell = "buy";
 
-      dispatch(addNewProduct({ token: currentUserToken, data: product_info }));
+      dispatch(addNewProduct(product_info));
     } else {
       buyOrSell = "sell";
 
-      dispatch(sellProducts({ token: currentUserToken, data: product_info }));
+      dispatch(sellProducts(product_info));
     }
+
     dispatch(
       addNewTransaction({
-        token: currentUserToken,
-        transactionData: {
-          customer_info,
-          product_info,
-          transactionType: buyOrSell,
-        },
+        customer_info,
+        product_info,
+        transactionType: buyOrSell,
       })
     );
     setCustomerDetails({
