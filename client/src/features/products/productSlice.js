@@ -259,6 +259,7 @@ const productSlice = createSlice({
         const { _id: id } = action.payload;
 
         productAdapter.removeOne(state, id);
+        state.status = "idle";
       })
       .addCase(updateProduct.fulfilled, (state, action) => {
         state.status = "idle";
