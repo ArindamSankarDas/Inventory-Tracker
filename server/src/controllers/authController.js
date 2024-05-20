@@ -84,7 +84,7 @@ const handleLogin = async (req, res) => {
       },
       process.env.ACCESS_TOKEN_SECRET,
       {
-        expiresIn: "10s",
+        expiresIn: "15m",
       }
     );
 
@@ -141,7 +141,7 @@ const handleRefresh = async (req, res) => {
         },
         process.env.ACCESS_TOKEN_SECRET,
         {
-          expiresIn: "10s",
+          expiresIn: "15m",
         }
       );
 

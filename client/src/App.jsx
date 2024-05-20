@@ -33,7 +33,7 @@ const App = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (currentAuthStatus === "succeeded" && currentUser && currentAuthToken) {
+    if (currentUser && currentAuthToken) {
       navigate("/home/");
     }
 
