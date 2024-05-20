@@ -91,7 +91,7 @@ const handleLogin = async (req, res) => {
     const refreshToken = jwt.sign(
       { emailId: foundUser.user_details.emailId },
       process.env.REFRESH_TOKEN_SECRET,
-      { expiresIn: "30m" }
+      { expiresIn: "7d" }
     );
 
     res.cookie("jwt", refreshToken, {
