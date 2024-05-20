@@ -23,6 +23,7 @@ const createProduct = async (req, res) => {
     if (existingProduct) {
       if (
         price === existingProduct?.price &&
+        itemCount > 0 &&
         isSeasonal === existingProduct?.isSeasonal
       ) {
         await existingProduct
@@ -35,6 +36,10 @@ const createProduct = async (req, res) => {
       } else {
         return res.sendStatus(400);
       }
+    }
+
+    if (itemCount < 1) {
+      return res.sendStatus(400);
     }
 
     let product = null;
@@ -76,7 +81,11 @@ const updateProduct = async (req, res) => {
 
     if (name) updatedDoc.name = name;
     if (price) updatedDoc.price = price;
-    if (itemCount) updatedDoc.itemCount = itemCount;
+    if (itemCount < 1) {
+      return res.sendStatus(400);
+    } else {
+      updatedDoc.itemCount = itemCount;
+    }
 
     const product = await Product.findByIdAndUpdate(
       id,
@@ -104,41 +113,40 @@ const decreaseProductCount = async (req, res) => {
   try {
     const existingProduct = await Product.findOne({ name }).exec();
 
-    if (!existingProduct) {
-      return res.sendStatus(404);
+    const productItemCount = existingProduct?.itemCount - itemCount;
+
+    if (existingProduct) {
+      if (
+        price === existingProduct?.price &&
+        isSeasonal === existingProduct?.isSeasonal &&
+        productItemCount > 0
+      ) {
+        await existingProduct
+          .updateOne({ itemCount: existingProduct.itemCount - itemCount })
+          .exec();
+        const updatedProduct = await Product.findByIdAndUpdate({
+          _id: existingProduct._id,
+        });
+
+        return res.status(200).json(updatedProduct);
+      } else if (
+        price === existingProduct?.price &&
+        isSeasonal === existingProduct?.isSeasonal &&
+        productItemCount === 0
+      ) {
+        await existingProduct.updateOne({ itemCount: 0 }).exec();
+
+        const deletedProduct = await Product.findByIdAndDelete({
+          _id: existingProduct._id,
+        });
+
+        return res.status(200).json(deletedProduct);
+      } else {
+        return res.sendStatus(400);
+      }
     }
 
-    if (
-      price === existingProduct?.price &&
-      isSeasonal === existingProduct?.isSeasonal &&
-      existingProduct?.itemCount - itemCount >= 0
-    ) {
-      await existingProduct
-        .updateOne({ itemCount: existingProduct.itemCount - itemCount })
-        .exec();
-
-      const updatedProduct = await Product.findByIdAndUpdate({
-        _id: existingProduct._id,
-      });
-
-      return res.status(200).json(updatedProduct);
-    }
-
-    if (
-      price === existingProduct?.price &&
-      isSeasonal === existingProduct?.isSeasonal &&
-      existingProduct?.itemCount - itemCount === 0
-    ) {
-      await existingProduct.updateOne({ itemCount: 0 }).exec();
-
-      const deletedProduct = await Product.findByIdAndDelete({
-        _id: existingProduct._id,
-      });
-
-      return res.status(200).json(deletedProduct);
-    }
-
-    res.sendStatus(400);
+    res.sendStatus(404);
   } catch (error) {
     res.sendStatus(500);
   }
