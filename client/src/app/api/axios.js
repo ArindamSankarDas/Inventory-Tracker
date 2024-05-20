@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:3500";
+const BASE_URL =
+  import.meta.env.MODE === "production" ? undefined : "http://localhost:3500";
 
 export const axiosPrivate = (accessToken) => {
   return axios.create({

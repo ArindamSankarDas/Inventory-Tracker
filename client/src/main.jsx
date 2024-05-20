@@ -12,9 +12,13 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { store, persistor } from "./app/store.js";
 
+import { disableReactDevTools } from "@fvilers/disable-react-devtools";
+
 import App from "./App.jsx";
 
 import "./index.css";
+
+if (import.meta.env.MODE === "production") disableReactDevTools();
 
 const router = createBrowserRouter(
   createRoutesFromElements(<Route path='/*' element={<App />} />)
