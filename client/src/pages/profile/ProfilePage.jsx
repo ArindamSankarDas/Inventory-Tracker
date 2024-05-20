@@ -16,11 +16,6 @@ const ProfilePage = () => {
     navigate("/");
   };
 
-  // remove it after implementing pesistance
-  if (!currentUser) {
-    navigate("/");
-  }
-
   return (
     <section className='min-h-full flex-1 px-6 py-6 bg-secondary'>
       <div className='mt-6 default_flex justify-center items-center lg:flex-row lg:gap-16 lg:mt-14'>

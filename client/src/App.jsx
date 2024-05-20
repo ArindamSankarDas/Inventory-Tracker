@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 
 import {
   selectUser,
@@ -32,15 +32,15 @@ const App = () => {
 
   const navigate = useNavigate();
 
+  const location = useLocation();
+
   useEffect(() => {
     if (currentUser && currentAuthToken) {
-      navigate("/home/");
+      if (!location.pathname.includes("home")) {
+        navigate("/home/");
+      }
     }
-
-    if (!currentUser || !currentAuthToken) {
-      navigate("/");
-    }
-  }, [currentUser, navigate, currentAuthStatus, currentAuthToken]);
+  }, [currentUser, navigate, location, currentAuthToken]);
 
   if (currentAuthStatus === "loading") {
     return (
