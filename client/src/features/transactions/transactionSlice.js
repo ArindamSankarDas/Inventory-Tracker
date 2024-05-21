@@ -23,10 +23,9 @@ export const fetchTransactions = createAsyncThunk(
     try {
       const response = await axiosPrivate(token).get("/api/transactions", {
         params: {
-          userId: userId,
+          userId,
         },
       });
-      console.log(response);
       return response.data;
     } catch (error) {
       if (error.response && error.response.status === 403) {
