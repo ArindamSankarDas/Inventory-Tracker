@@ -17,12 +17,16 @@ const initialState = productAdapter.getInitialState({
 
 export const fetchProducts = createAsyncThunk(
   "products/fetchProducts",
-  async (_, thunkAPI) => {
+  async (userId, thunkAPI) => {
     let state = thunkAPI.getState();
     let token = state.auth.token;
 
     try {
-      const response = await axiosPrivate(token).get("/api/inventory");
+      const response = await axiosPrivate(token).get("/api/inventory", {
+        params: {
+          userId,
+        },
+      });
       return response.data;
     } catch (error) {
       if (error.response && error.response.status === 403) {
@@ -31,7 +35,11 @@ export const fetchProducts = createAsyncThunk(
         state = thunkAPI.getState();
         token = state.auth.token;
 
-        const retryResponse = await axiosPrivate(token).get("/api/inventory");
+        const retryResponse = await axiosPrivate(token).get("/api/inventory", {
+          params: {
+            userId,
+          },
+        });
         return retryResponse.data;
       } else {
         throw error;
@@ -42,18 +50,26 @@ export const fetchProducts = createAsyncThunk(
 
 export const addNewProduct = createAsyncThunk(
   "products/addProducts",
-  async (data, thunkAPI) => {
+  async ({ userId, data }, thunkAPI) => {
     let state = thunkAPI.getState();
     let token = state.auth.token;
 
     try {
-      const response = await axiosPrivate(token).post("/api/inventory", {
-        ...data,
-        name: data.name.trim().toLowerCase(),
-        price: Number(data.price),
-        itemCount: Number(data.itemCount),
-        isSeasonal: Boolean(data.isSeasonal),
-      });
+      const response = await axiosPrivate(token).post(
+        "/api/inventory",
+        {
+          ...data,
+          name: data.name.trim().toLowerCase(),
+          price: Number(data.price),
+          itemCount: Number(data.itemCount),
+          isSeasonal: Boolean(data.isSeasonal),
+        },
+        {
+          params: {
+            userId,
+          },
+        }
+      );
 
       return response.data;
     } catch (error) {
@@ -63,13 +79,21 @@ export const addNewProduct = createAsyncThunk(
         state = thunkAPI.getState();
         token = state.auth.token;
 
-        const retryResponse = await axiosPrivate(token).post("/api/inventory", {
-          ...data,
-          name: data.name.trim().toLowerCase(),
-          price: Number(data.price),
-          itemCount: Number(data.itemCount),
-          isSeasonal: Boolean(data.isSeasonal),
-        });
+        const retryResponse = await axiosPrivate(token).post(
+          "/api/inventory",
+          {
+            ...data,
+            name: data.name.trim().toLowerCase(),
+            price: Number(data.price),
+            itemCount: Number(data.itemCount),
+            isSeasonal: Boolean(data.isSeasonal),
+          },
+          {
+            params: {
+              userId,
+            },
+          }
+        );
         return retryResponse.data;
       } else {
         throw error;
@@ -80,18 +104,26 @@ export const addNewProduct = createAsyncThunk(
 
 export const sellProducts = createAsyncThunk(
   "products/sellProducts",
-  async (data, thunkAPI) => {
+  async ({ userId, data }, thunkAPI) => {
     let state = thunkAPI.getState();
     let token = state.auth.token;
 
     try {
-      const response = await axiosPrivate(token).patch("/api/inventory", {
-        ...data,
-        name: data.name.trim().toLowerCase(),
-        price: Number(data.price),
-        itemCount: Number(data.itemCount),
-        isSeasonal: Boolean(data.isSeasonal),
-      });
+      const response = await axiosPrivate(token).patch(
+        "/api/inventory",
+        {
+          ...data,
+          name: data.name.trim().toLowerCase(),
+          price: Number(data.price),
+          itemCount: Number(data.itemCount),
+          isSeasonal: Boolean(data.isSeasonal),
+        },
+        {
+          params: {
+            userId,
+          },
+        }
+      );
 
       return response.data;
     } catch (error) {
@@ -109,6 +141,11 @@ export const sellProducts = createAsyncThunk(
             price: Number(data.price),
             itemCount: Number(data.itemCount),
             isSeasonal: Boolean(data.isSeasonal),
+          },
+          {
+            params: {
+              userId,
+            },
           }
         );
 
@@ -122,15 +159,14 @@ export const sellProducts = createAsyncThunk(
 
 export const deleteProduct = createAsyncThunk(
   "products/deleteProduct",
-  async (productId, thunkAPI) => {
+  async ({ userId, productId }, thunkAPI) => {
+    console.log(productId);
     let state = thunkAPI.getState();
     let token = state.auth.token;
 
     try {
       const response = await axiosPrivate(token).delete(`/api/inventory`, {
-        data: {
-          id: productId,
-        },
+        params: { id: productId, userId },
       });
 
       return response.data;
@@ -144,9 +180,7 @@ export const deleteProduct = createAsyncThunk(
         const retryResponse = await axiosPrivate(token).delete(
           "/api/inventory",
           {
-            data: {
-              id: productId,
-            },
+            params: { id: productId, userId },
           }
         );
         return retryResponse.data;
@@ -159,15 +193,23 @@ export const deleteProduct = createAsyncThunk(
 
 export const updateProduct = createAsyncThunk(
   "products/updateProduct",
-  async (updatedData, thunkAPI) => {
+  async ({ userId, updatedData }, thunkAPI) => {
     let state = thunkAPI.getState();
     let token = state.auth.token;
 
     try {
-      const response = await axiosPrivate(token).put("/api/inventory", {
-        ...updatedData,
-        name: updatedData.name.trim().toLowerCase(),
-      });
+      const response = await axiosPrivate(token).put(
+        "/api/inventory",
+        {
+          ...updatedData,
+          name: updatedData.name.trim().toLowerCase(),
+        },
+        {
+          params: {
+            userId,
+          },
+        }
+      );
 
       return response.data;
     } catch (error) {
@@ -177,10 +219,18 @@ export const updateProduct = createAsyncThunk(
         state = thunkAPI.getState();
         token = state.auth.token;
 
-        const retryResponse = await axiosPrivate(token).put("/api/inventory", {
-          ...updatedData,
-          name: updatedData.name.trim().toLowerCase(),
-        });
+        const retryResponse = await axiosPrivate(token).put(
+          "/api/inventory",
+          {
+            ...updatedData,
+            name: updatedData.name.trim().toLowerCase(),
+          },
+          {
+            params: {
+              userId,
+            },
+          }
+        );
 
         return retryResponse.data;
       } else {
@@ -193,6 +243,13 @@ export const updateProduct = createAsyncThunk(
 const productSlice = createSlice({
   name: "products",
   initialState,
+  reducers: {
+    resetProducts(state) {
+      productAdapter.removeAll(state);
+      state.status = "idle";
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchProducts.pending, (state) => {
@@ -272,6 +329,8 @@ const productSlice = createSlice({
       });
   },
 });
+
+export const { resetProducts } = productSlice.actions;
 
 export const { selectAll: selectAllProducts } = productAdapter.getSelectors(
   (state) => state.products

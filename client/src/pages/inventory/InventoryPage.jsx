@@ -12,6 +12,7 @@ import {
 import SubHeader from "../../components/SubHeader/SubHeader";
 import ItemsTable from "../../components/ItemsTable/ItemsTable";
 import AddProduct from "../../components/AddProduct/AddProduct";
+import { selectUser } from "../../features/auth/authSlice";
 
 const InventoryPage = () => {
   const [addItem, setAddItem] = useState(false);
@@ -19,6 +20,7 @@ const InventoryPage = () => {
 
   const dispatch = useDispatch();
 
+  const currentUser = useSelector(selectUser);
   const products = useSelector(selectAllProducts);
   const seasonalProducts = useSelector(selectSeasonalProducts);
   const productStatus = useSelector(selectStateStatus);
@@ -26,9 +28,9 @@ const InventoryPage = () => {
 
   useEffect(() => {
     if (productStatus === "idle") {
-      dispatch(fetchProducts());
+      dispatch(fetchProducts(currentUser.id));
     }
-  }, [dispatch, productStatus]);
+  }, [dispatch, productStatus, currentUser]);
 
   return (
     <section className='relative flex-1 lg:px-[15rem] lg:py-10'>

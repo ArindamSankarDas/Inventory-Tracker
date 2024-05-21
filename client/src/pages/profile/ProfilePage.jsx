@@ -5,6 +5,7 @@ import { authLogout, selectUser } from "../../features/auth/authSlice";
 
 import Logo from "../../assets/mobile/logo-mobl.svg";
 import { resetTransactions } from "../../features/transactions/transactionSlice";
+import { resetProducts } from "../../features/products/productSlice";
 
 const ProfilePage = () => {
   const currentUser = useSelector(selectUser);
@@ -15,6 +16,7 @@ const ProfilePage = () => {
   const handleClick = () => {
     dispatch(authLogout());
     dispatch(resetTransactions());
+    dispatch(resetProducts());
     navigate("/");
   };
 

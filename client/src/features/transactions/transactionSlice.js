@@ -10,7 +10,7 @@ import { authRefresh } from "../auth/authSlice";
 const transactionAdapter = createEntityAdapter({});
 
 const initialState = transactionAdapter.getInitialState({
-  status: "idle", // idle | loading | succeeded | failed
+  status: "idle",
   error: null,
 });
 
@@ -83,6 +83,8 @@ const transactionSlice = createSlice({
   reducers: {
     resetTransactions(state) {
       transactionAdapter.removeAll(state);
+      state.status = "idle";
+      state.error = null;
     },
   },
   extraReducers: (builder) => {

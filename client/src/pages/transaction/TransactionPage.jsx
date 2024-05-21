@@ -52,11 +52,15 @@ const TransactionPage = () => {
     if (isActive) {
       buyOrSell = "buy";
 
-      dispatch(addNewProduct(product_info));
+      dispatch(
+        addNewProduct({ userId: currentUser.id, data: product_info })
+      );
     } else {
       buyOrSell = "sell";
 
-      dispatch(sellProducts(product_info));
+      dispatch(
+        sellProducts({ userId: currentUser.id, data: product_info })
+      );
     }
 
     dispatch(
