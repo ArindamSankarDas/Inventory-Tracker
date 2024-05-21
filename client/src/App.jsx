@@ -20,6 +20,7 @@ import InventoryPage from "./pages/inventory/InventoryPage";
 import TransactionPage from "./pages/transaction/TransactionPage";
 import HistoryPage from "./pages/history/HistoryPage";
 import ProfilePage from "./pages/profile/ProfilePage";
+import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 
 import ErrorBoundaryElement from "./components/Error/ErrorBoundaryElement";
 
@@ -40,7 +41,7 @@ const App = () => {
         navigate("/home/");
       }
     }
-  }, [currentUser, navigate, location, currentAuthToken]);
+  }, [currentUser, navigate, location.pathname, currentAuthToken]);
 
   if (currentAuthStatus === "loading") {
     return (
@@ -57,11 +58,47 @@ const App = () => {
         <Route path='login' element={<LoginPage />} />
         <Route path='register' element={<RegisterPage />} />
         <Route path='home' element={<UserLayout />}>
-          <Route index element={<UserHomePage />} />
-          <Route path='inventory' element={<InventoryPage />} />
-          <Route path='transactions' element={<TransactionPage />} />
-          <Route path='history' element={<HistoryPage />} />
-          <Route path='profile' element={<ProfilePage />} />
+          <Route
+            index
+            element={
+              <ProtectedRoute>
+                <UserHomePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='inventory'
+            element={
+              <ProtectedRoute>
+                <InventoryPage />
+              </ProtectedRoute>
+            }
+          />
+          `
+          <Route
+            path='transactions'
+            element={
+              <ProtectedRoute>
+                <TransactionPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='history'
+            element={
+              <ProtectedRoute>
+                <HistoryPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='profile'
+            element={
+              <ProtectedRoute>
+                <ProfilePage />
+              </ProtectedRoute>
+            }
+          />
         </Route>
       </Route>
       <Route path='*' element={<ErrorBoundaryElement />} />
