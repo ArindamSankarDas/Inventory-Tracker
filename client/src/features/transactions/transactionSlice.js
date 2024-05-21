@@ -1,6 +1,7 @@
 import {
   createEntityAdapter,
   createSlice,
+  createSelector,
   createAsyncThunk,
 } from "@reduxjs/toolkit";
 
@@ -133,6 +134,24 @@ export const { resetTransactions } = transactionSlice.actions;
 
 export const { selectAll: selectAllTransactions } =
   transactionAdapter.getSelectors((state) => state.transactions);
+
+export const selectTotalTransactions = createSelector(
+  [selectAllTransactions],
+  (transactions) => transactions.length
+);
+
+export const selectBuyTransactions = createSelector(
+  [selectAllTransactions],
+  (transactions) =>
+    transactions.filter((transaction) => transaction.transactionType === "buy")
+      .length
+);
+export const selectSellTransactions = createSelector(
+  [selectAllTransactions],
+  (transactions) =>
+    transactions.filter((transaction) => transaction.transactionType === "sell")
+      .length
+);
 
 export const selectTransactionStatus = (state) => state.transactions.status;
 export const selectTransactionError = (state) => state.transactions.error;

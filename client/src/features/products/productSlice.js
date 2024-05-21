@@ -336,6 +336,14 @@ export const { selectAll: selectAllProducts } = productAdapter.getSelectors(
   (state) => state.products
 );
 
+export const selectAvailableProducts = createSelector(
+  [selectAllProducts],
+  (products) =>
+    products.reduce((prevval, currVal) => {
+      return prevval + currVal.itemCount;
+    }, 0)
+);
+
 export const selectStateStatus = (state) => state.products.status;
 export const selectStateError = (state) => state.products.error;
 
