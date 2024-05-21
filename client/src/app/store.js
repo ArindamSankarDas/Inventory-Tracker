@@ -25,7 +25,7 @@ export const store = configureStore({
     getDefaultMiddleware({
       serializableCheck: false,
     }),
-  devTools: import.meta.env.MODE === "production" ? false : true,
+  devTools: false,
 });
 
 export const persistor = persistStore(store);
