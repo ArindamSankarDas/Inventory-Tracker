@@ -1,7 +1,13 @@
 const Product = require("../model/Product");
 
 const getAllProducts = async (req, res) => {
-  const products = await Product.find({}).exec();
+  const { userId } = req.query;
+
+  if (!userId) {
+    return res.sendStatus(406);
+  }
+
+  const products = await Product.find({ userId }).exec();
 
   if (!products?.length) {
     return res.sendStatus(204);
@@ -12,13 +18,14 @@ const getAllProducts = async (req, res) => {
 
 const createProduct = async (req, res) => {
   const { name, price, itemCount, isSeasonal } = req.body;
+  const { userId } = req.query;
 
-  if (!name || !price || !itemCount) {
+  if (!name || !price || !itemCount || !userId) {
     return res.sendStatus(406);
   }
 
   try {
-    const existingProduct = await Product.findOne({ name }).exec();
+    const existingProduct = await Product.findOne({ name, userId }).exec();
 
     if (existingProduct) {
       if (
@@ -50,12 +57,14 @@ const createProduct = async (req, res) => {
         price,
         itemCount,
         isSeasonal,
+        userId,
       });
     } else {
       product = await Product.create({
         name,
         price,
         itemCount,
+        userId,
       });
     }
 
@@ -71,9 +80,10 @@ const createProduct = async (req, res) => {
 
 const updateProduct = async (req, res) => {
   const { id, name, price, itemCount } = req.body;
+  const { userId } = req.query;
 
-  if (!id) {
-    return res.status(406).json({ message: "Filter data can not be empty" });
+  if (!id || !userId) {
+    return res.sendStatus(406);
   }
 
   try {
@@ -83,8 +93,8 @@ const updateProduct = async (req, res) => {
     if (price) updatedDoc.price = price;
     if (itemCount && itemCount > 0) updatedDoc.itemCount = itemCount;
 
-    const product = await Product.findByIdAndUpdate(
-      id,
+    const product = await Product.findOneAndUpdate(
+      { _id: id, userId },
       { $set: updatedDoc },
       { new: true }
     ).exec();
@@ -93,21 +103,22 @@ const updateProduct = async (req, res) => {
       return res.status(200).json(product);
     }
 
-    res.status(400).json({ message: "Invalid data" });
+    res.sendStatus(400);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.sendStatus(500);
   }
 };
 
 const decreaseProductCount = async (req, res) => {
   const { name, price, itemCount, isSeasonal } = req.body;
+  const { userId } = req.query;
 
-  if (!name || !price || !itemCount) {
+  if (!name || !price || !itemCount || !userId) {
     return res.sendStatus(406);
   }
 
   try {
-    const existingProduct = await Product.findOne({ name }).exec();
+    const existingProduct = await Product.findOne({ name, userId }).exec();
 
     const productItemCount = existingProduct?.itemCount - itemCount;
 
@@ -120,8 +131,10 @@ const decreaseProductCount = async (req, res) => {
         await existingProduct
           .updateOne({ itemCount: existingProduct.itemCount - itemCount })
           .exec();
-        const updatedProduct = await Product.findByIdAndUpdate({
-          _id: existingProduct._id,
+
+        const updatedProduct = await Product.findOne({
+          _id: existingProduct.id,
+          userId,
         });
 
         return res.status(200).json(updatedProduct);
@@ -134,6 +147,7 @@ const decreaseProductCount = async (req, res) => {
 
         const deletedProduct = await Product.findByIdAndDelete({
           _id: existingProduct._id,
+          userId: existingProduct.userId,
         });
 
         return res.status(200).json(deletedProduct);
@@ -149,14 +163,13 @@ const decreaseProductCount = async (req, res) => {
 };
 
 const deleteProduct = async (req, res) => {
-  const { id } = req.body;
-
-  if (!id) {
+  const { userId, id } = req.query;
+  if (!id || !userId) {
     return res.sendStatus(406);
   }
 
   try {
-    const product = await Product.findByIdAndDelete(id).exec();
+    const product = await Product.findOneAndDelete({ _id: id, userId }).exec();
 
     if (product) {
       res.status(200).json(product);
