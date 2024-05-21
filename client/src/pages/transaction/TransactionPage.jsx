@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import {
   addNewProduct,
@@ -9,8 +9,10 @@ import { addNewTransaction } from "../../features/transactions/transactionSlice"
 
 import SubHeader from "../../components/SubHeader/SubHeader";
 import FormInput from "../../components/FormInput/FormInput";
+import { selectUser } from "../../features/auth/authSlice";
 
 const TransactionPage = () => {
+  const currentUser = useSelector(selectUser);
   const [isActive, setIsActive] = useState(true);
   const [customerDetails, setCustomerDetails] = useState({
     name: "",
@@ -59,6 +61,7 @@ const TransactionPage = () => {
 
     dispatch(
       addNewTransaction({
+        userId: currentUser.id,
         customer_info,
         product_info,
         transactionType: buyOrSell,

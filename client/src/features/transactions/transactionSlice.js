@@ -16,12 +16,17 @@ const initialState = transactionAdapter.getInitialState({
 
 export const fetchTransactions = createAsyncThunk(
   "transactions/fetchTransactions",
-  async (_, thunkAPI) => {
+  async (userId, thunkAPI) => {
     let state = thunkAPI.getState();
     let token = state.auth.token;
 
     try {
-      const response = await axiosPrivate(token).get("/api/transactions");
+      const response = await axiosPrivate(token).get("/api/transactions", {
+        params: {
+          userId: userId,
+        },
+      });
+      console.log(response);
       return response.data;
     } catch (error) {
       if (error.response && error.response.status === 403) {
@@ -73,9 +78,14 @@ export const addNewTransaction = createAsyncThunk(
   }
 );
 
-const transactionReducer = createSlice({
+const transactionSlice = createSlice({
   name: "transactions",
   initialState,
+  reducers: {
+    resetTransactions(state) {
+      transactionAdapter.removeAll(state);
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchTransactions.pending, (state) => {
@@ -118,10 +128,12 @@ const transactionReducer = createSlice({
   },
 });
 
+export const { resetTransactions } = transactionSlice.actions;
+
 export const { selectAll: selectAllTransactions } =
   transactionAdapter.getSelectors((state) => state.transactions);
 
 export const selectTransactionStatus = (state) => state.transactions.status;
 export const selectTransactionError = (state) => state.transactions.error;
 
-export default transactionReducer.reducer;
+export default transactionSlice.reducer;

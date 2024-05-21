@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { authLogout, selectUser } from "../../features/auth/authSlice";
 
 import Logo from "../../assets/mobile/logo-mobl.svg";
+import { resetTransactions } from "../../features/transactions/transactionSlice";
 
 const ProfilePage = () => {
   const currentUser = useSelector(selectUser);
@@ -13,6 +14,7 @@ const ProfilePage = () => {
 
   const handleClick = () => {
     dispatch(authLogout());
+    dispatch(resetTransactions());
     navigate("/");
   };
 
