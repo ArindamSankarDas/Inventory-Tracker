@@ -81,11 +81,7 @@ const updateProduct = async (req, res) => {
 
     if (name) updatedDoc.name = name;
     if (price) updatedDoc.price = price;
-    if (itemCount < 1) {
-      return res.sendStatus(400);
-    } else {
-      updatedDoc.itemCount = itemCount;
-    }
+    if (itemCount && itemCount > 0) updatedDoc.itemCount = itemCount;
 
     const product = await Product.findByIdAndUpdate(
       id,

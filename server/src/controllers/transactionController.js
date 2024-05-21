@@ -1,7 +1,13 @@
 const Transaction = require("../model/Transaction");
 
 const getAllTransactions = async (req, res) => {
-  const transactions = await Transaction.find({}).exec();
+  const { userId } = req.query;
+
+  if (!userId) {
+    return res.sendStatus(406);
+  }
+
+  const transactions = await Transaction.find({ userId }).exec();
 
   if (!transactions?.length) {
     return res.sendStatus(204);
@@ -11,15 +17,16 @@ const getAllTransactions = async (req, res) => {
 };
 
 const initiateNewTransaction = async (req, res) => {
-  const { transactionType, customer_info, product_info } = req.body;
+  const { transactionType, customer_info, product_info, userId } = req.body;
 
-  if (!transactionType || !customer_info || !product_info) {
+  if (!transactionType || !customer_info || !product_info || !userId) {
     return res.sendStatus(406);
   }
 
   try {
     const transaction = await Transaction.create({
       transactionType,
+      userId,
       customer_details: {
         ...customer_info,
       },

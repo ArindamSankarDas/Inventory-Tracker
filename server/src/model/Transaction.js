@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const transactionSchema = new mongoose.Schema({
   date: { type: Date, default: Date.now },
   transactionType: String,
+  userId: { type: String, required: true },
   customer_details: {
     name: String,
     phone: Number,
