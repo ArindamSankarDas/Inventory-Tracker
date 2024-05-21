@@ -1,7 +1,9 @@
 import axios from "axios";
 
 const BASE_URL =
-  import.meta.env.MODE === "production" ? undefined : "http://localhost:3500";
+  import.meta.env.MODE === "production"
+    ? "https://inventoTrack-api.onrender.com"
+    : "http://localhost:3500";
 
 export const axiosPrivate = (accessToken) => {
   return axios.create({
