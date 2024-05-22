@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "https://inventotrack-api.onrender.com";
+const BASE_URL = "https://inventotrack-api-8t6b.onrender.com";
 
 export const axiosPrivate = (accessToken) => {
   return axios.create({
