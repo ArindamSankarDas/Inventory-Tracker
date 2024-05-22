@@ -38,7 +38,7 @@ const RegisterPage = () => {
     const errors = {
       username: !NAME_REGEX.test(username),
       emailId: !EMAIL_REGEX.test(emailId),
-      password: !PWD_REGEX.test(password),
+      password: PWD_REGEX.test(password),
       confirmPassword: password !== confirmPassword,
       shopname: !NAME_REGEX.test(shopname),
       address: address.length === 0,
@@ -53,6 +53,7 @@ const RegisterPage = () => {
     e.preventDefault();
 
     if (validateForm()) {
+      console.log("hello");
       return;
     }
 
@@ -105,8 +106,12 @@ const RegisterPage = () => {
                 }
               />
               {errorState.username && (
-                <h3 className='absolute text-red-600 font-bold'>
-                  Invalid username
+                <h3 className=' text-red-600 font-bold'>
+                  4 to 24 characters.
+                  <br />
+                  Must begin with a letter.
+                  <br />
+                  Letters, numbers, underscores, hyphens allowed.
                 </h3>
               )}
             </div>
@@ -128,9 +133,7 @@ const RegisterPage = () => {
                 }
               />
               {errorState.emailId && (
-                <h3 className='absolute text-red-600 font-bold'>
-                  Invalid email
-                </h3>
+                <h3 className=' text-red-600 font-bold'>Invalid email</h3>
               )}
             </div>
             <div
@@ -151,8 +154,16 @@ const RegisterPage = () => {
                 }
               />
               {errorState.password && (
-                <h3 className='absolute text-red-600 font-bold'>
-                  Invalid password
+                <h3 className=' text-red-600 font-bold'>
+                  8 to 24 characters, atleast one uppercase and one lowercase
+                  letter and a special character.
+                  <br />
+                  Allowed special characters:{" "}
+                  <span aria-label='exclamation mark'>!</span>
+                  <span aria-label='at symbol'>@</span>
+                  <span aria-label='hashtag'>#</span>
+                  <span aria-label='dollar sign'>$</span>
+                  <span aria-label='percent'>%</span>
                 </h3>
               )}
             </div>
@@ -176,7 +187,7 @@ const RegisterPage = () => {
                 }
               />
               {errorState.confirmPassword && (
-                <h3 className='absolute text-red-600 font-bold'>
+                <h3 className=' text-red-600 font-bold'>
                   Passwords do not match
                 </h3>
               )}
@@ -204,8 +215,13 @@ const RegisterPage = () => {
                 }
               />
               {errorState.shopname && (
-                <h3 className='absolute text-red-600 font-bold'>
-                  Invalid shop name
+                <h3 className=' text-red-600 font-bold'>
+                  {" "}
+                  4 to 24 characters.
+                  <br />
+                  Must begin with a letter.
+                  <br />
+                  Letters, numbers, underscores, hyphens allowed.
                 </h3>
               )}
             </div>
@@ -227,9 +243,7 @@ const RegisterPage = () => {
                 }
               />
               {errorState.address && (
-                <h3 className='absolute text-red-600 font-bold'>
-                  Invalid address
-                </h3>
+                <h3 className=' text-red-600 font-bold'>Invalid address</h3>
               )}
             </div>
           </div>
