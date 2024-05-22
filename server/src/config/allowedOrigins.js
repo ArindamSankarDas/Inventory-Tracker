@@ -1,3 +1,3 @@
-const allowedOrigins = ["https://inventotrack.onrender.com"];
+const allowedOrigins = ["https://inventotrack.vercel.app"];
 
 module.exports = allowedOrigins;
