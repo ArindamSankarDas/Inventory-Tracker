@@ -15,9 +15,12 @@ const port = process.env.PORT || 3000;
 // server config
 const corsOptions = require("./config/corsOptions");
 const credentials = require("./middleware/credentials");
+const { logger } = require("./middleware/logger");
 
 // initiate database connection
 connectDB();
+
+app.use(logger);
 
 // check if the credentials can be passed
 app.use(credentials);
@@ -34,6 +37,8 @@ app.use("/api/transactions", require("./routes/transactionRoute"));
 app.use("/api/user", require("./routes/userRoute"));
 app.use("/api/auth", require("./routes/authRoute"));
 
+app.use(errorHandler);
+
 // establishing database connection
 mongoose.connection.once("open", () => {
   console.log("Database connection established");
@@ -44,6 +49,9 @@ mongoose.connection.once("open", () => {
 });
 
 // database errors
-mongoose.connection.on("error", (error) => {
-  console.log(error.message);
+mongoose.connection.on("error", (err) => {
+  logEvents(
+    `${err.no}: ${err.code}\t${err.syscall}\t${err.hostname}`,
+    "mongoErrLog.log"
+  );
 });
