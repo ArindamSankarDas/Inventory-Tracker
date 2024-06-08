@@ -22,7 +22,6 @@ The Inventory Tracker Application is a comprehensive solution designed to manage
 ### Transaction Tracking
 The application keeps a comprehensive log of all buying and selling activities, allowing users to:
 - Track transaction histories.
-- Generate reports.
 - Analyze inventory movements over time.
 
 ## Benefits
