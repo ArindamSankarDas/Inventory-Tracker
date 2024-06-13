@@ -12,12 +12,14 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { store, persistor } from "./app/store.js";
 
+// in development comment it out 👇🏻
 import { disableReactDevTools } from "@fvilers/disable-react-devtools";
 
 import App from "./App.jsx";
 
 import "./index.css";
 
+// in development comment it out 👇🏻
 if (import.meta.env.MODE === "production") disableReactDevTools();
 
 const router = createBrowserRouter(

@@ -25,6 +25,7 @@ export const store = configureStore({
     getDefaultMiddleware({
       serializableCheck: false,
     }),
+  // development-> set it to true 👇🏻
   devTools: false,
 });
 
