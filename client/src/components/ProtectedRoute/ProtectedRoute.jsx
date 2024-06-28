@@ -20,7 +20,7 @@ const ProtectedRoute = ({ children }) => {
       </div>
     );
   }
-  return currentUser && currentAuthToken ? (
+  return currentUser && currentAuthToken && currentAuthStatus !== "failed" ? (
     children
   ) : (
     <Navigate to={"/login"} />

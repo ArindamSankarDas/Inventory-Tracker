@@ -15,7 +15,7 @@ const port = process.env.PORT || 3000;
 // server config
 const corsOptions = require("./config/corsOptions");
 const credentials = require("./middleware/credentials");
-const { logger } = require("./middleware/logger");
+const { logger, logEvents } = require("./middleware/logger");
 const errorHandler = require("./middleware/errorLogger");
 
 // initiate database connection

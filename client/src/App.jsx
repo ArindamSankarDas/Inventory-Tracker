@@ -36,12 +36,18 @@ const App = () => {
   const location = useLocation();
 
   useEffect(() => {
-    if (currentUser && currentAuthToken) {
+    if (currentUser && currentAuthToken && currentAuthStatus !== "failed") {
       if (!location.pathname.includes("home")) {
         navigate("/home/");
       }
     }
-  }, [currentUser, navigate, location.pathname, currentAuthToken]);
+  }, [
+    currentUser,
+    navigate,
+    location.pathname,
+    currentAuthToken,
+    currentAuthStatus,
+  ]);
 
   if (currentAuthStatus === "loading") {
     return (
